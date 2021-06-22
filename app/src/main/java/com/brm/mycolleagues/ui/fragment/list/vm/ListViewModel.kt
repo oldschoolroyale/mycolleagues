@@ -1,10 +1,12 @@
 package com.brm.mycolleagues.ui.fragment.list.vm
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brm.mycolleagues.ui.fragment.list.model.PersonModel
+import com.brm.mycolleagues.utils.AppPreferences
 import com.brm.mycolleagues.utils.BaseModel
 import com.brm.mycolleagues.utils.BaseResponse
 import com.brm.mycolleagues.utils.Status
@@ -41,7 +43,18 @@ class ListViewModel: ViewModel() {
         }
     }
 
-    fun locationCheck(){
-        
+    fun startWork(){
+        AppPreferences.start_time = System.currentTimeMillis()
+        Log.d("oldschool", "startWork")
+    }
+
+    fun endWork(){
+        if (AppPreferences.start_time != null){
+            val endTime = System.currentTimeMillis()
+            AppPreferences.end_time = endTime
+            AppPreferences.worked_hours = endTime - AppPreferences.start_time!!
+            AppPreferences.start_time = null
+            Log.d("oldschool", AppPreferences.worked_hours.toString())
+        }
     }
 }

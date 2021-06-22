@@ -20,6 +20,7 @@ import com.brm.mycolleagues.R
 import com.brm.mycolleagues.databinding.FragmentListBinding
 import com.brm.mycolleagues.ui.fragment.list.model.PersonModel
 import com.brm.mycolleagues.ui.fragment.list.vm.ListViewModel
+import com.brm.mycolleagues.utils.AppPreferences
 import com.brm.mycolleagues.utils.BaseModel
 import com.brm.mycolleagues.utils.Status
 import com.google.android.gms.common.api.ApiException
@@ -41,9 +42,6 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener, EasyPermissions
 
     private val listViewModel by viewModels<ListViewModel>()
     private val adapter = com.brm.mycolleagues.ui.fragment.list.adapter.ListAdapter()
-
-    private lateinit var fusedLocation: FusedLocationProviderClient
-
 
     private val listObservable = Observer<BaseModel<List<PersonModel>>>{
         when(it.status){
@@ -71,19 +69,24 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener, EasyPermissions
         listViewModel.loadList()
         listViewModel.loading_status.observe(viewLifecycleOwner, listObservable)
 
-        fusedLocation   = LocationServices.getFusedLocationProviderClient(requireContext())
 
         binding.fragmentListFab.setOnClickListener {
-                val dialogBuilder = AlertDialog.Builder(view.context)
-                dialogBuilder.setMessage(view.context.getString(R.string.start_work_question))
-                    // if the dialog is cancelable
-                    .setCancelable(true)
-                    .setPositiveButton(view.context.getString(R.string.start), DialogInterface.OnClickListener {
-                            dialog, id -> locationRequest()
-                    })
-                    .setNegativeButton(view.context.getString(R.string.cancel)) { _, _ ->}
-                val alert = dialogBuilder.create()
-                alert.show()
+//                val dialogBuilder = AlertDialog.Builder(view.context)
+//                dialogBuilder.setMessage(view.context.getString(R.string.start_work_question))
+//                    // if the dialog is cancelable
+//                    .setCancelable(true)
+//                    .setPositiveButton(view.context.getString(R.string.start), DialogInterface.OnClickListener {
+//                            dialog, id -> locationRequest()
+//                    })
+//                    .setNegativeButton(view.context.getString(R.string.cancel)) { _, _ ->}
+//                val alert = dialogBuilder.create()
+//                alert.show()
+            if (AppPreferences.start_time == null){
+                listViewModel.startWork()
+            }
+            else{
+                listViewModel.endWork()
+            }
 
         }
     }
