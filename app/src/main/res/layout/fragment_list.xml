@@ -4,45 +4,76 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <variable
+            name="viewModel"
+            type="com.brm.mycolleagues.ui.fragment.list.vm.ListViewModel" />
+        <variable
+            name="context"
+            type="android.content.Context" />
 
     </data>
 
-    <RelativeLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/fragmentListSwipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.fragment.list.ListFragment">
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
+            android:background="#e6e6e6">
+            <com.wang.avi.AVLoadingIndicatorView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:text="Сейчас на работе:"
-                android:textColor="@color/black"
-                android:fontFamily="@font/euclid_square_semibold"
-                android:padding="18dp"/>
-
-            <androidx.recyclerview.widget.RecyclerView
+                android:loaderVisibility="@{viewModel.loading_status}"
+                android:layout_centerInParent="true"
+                app:indicatorName="BallPulseIndicator"
+                app:indicatorColor="@color/colorAccent"
+                style="@style/AVLoadingIndicatorView"/>
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:overScrollMode="never"
-                android:id="@+id/fragmentListRecycler" />
-        </LinearLayout>
+                android:id="@+id/fragmentListEmptyListLayout"
+                android:background="#e6e6e6"
+                android:visibility="invisible"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Пока на работе никого нет..."
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="50dp"
+                    android:gravity="center"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="380dp"
+                    android:layout_alignParentBottom="true"
+                    android:src="@drawable/bg_no_item_cactus"/>
+            </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:overScrollMode="never"
+                    android:id="@+id/fragmentListRecycler" />
 
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fragmentListFab"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_done"
-            app:tint="@color/white"
-            android:layout_margin="18dp"
-            android:contentDescription="@string/fab" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fragmentListFab"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_done"
+                android:onClick="@{() -> viewModel.workAlertDialog(context)}"
+                app:tint="@color/white"
+                android:layout_margin="18dp"
+                android:contentDescription="@string/fab" />
+        </RelativeLayout>
 
-    </RelativeLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

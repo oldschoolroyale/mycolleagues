@@ -2,10 +2,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/paymentAddMenuSearch"
+        android:id="@+id/listMenuSearch"
         android:title="@string/search"
         android:icon="@drawable/ic_search"
         app:showAsAction="ifRoom"
         app:actionViewClass="androidx.appcompat.widget.SearchView" />
+    <item
+        android:id="@+id/listMenuAllUsers"
+        android:title="Все пользователи"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_list"/>
+    <item android:id="@+id/listMenuSettings"
+        android:title="Настройки"
+        app:showAsAction="never"/>
+    <item android:id="@+id/listMenuProfile"
+        android:title="Профиль"
+        app:showAsAction="never"/>
+    <item android:id="@+id/listMenuSignOut"
+        android:title="Выйти"
+        app:showAsAction="never"/>
 
 </menu>

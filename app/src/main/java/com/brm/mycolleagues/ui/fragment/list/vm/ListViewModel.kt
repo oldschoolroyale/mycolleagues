@@ -1,10 +1,16 @@
 package com.brm.mycolleagues.ui.fragment.list.vm
 
+import android.content.Context
+import android.content.DialogInterface
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.brm.mycolleagues.R
+import com.brm.mycolleagues.network.repository.AllUsersRepository
 import com.brm.mycolleagues.ui.fragment.list.model.PersonModel
 import com.brm.mycolleagues.utils.AppPreferences
 import com.brm.mycolleagues.utils.BaseModel
@@ -15,46 +21,80 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ListViewModel: ViewModel() {
+class ListViewModel @ViewModelInject constructor(private val repository: AllUsersRepository): ViewModel() {
     private val _loading_status = MutableLiveData<BaseModel<List<PersonModel>>>()
     val loading_status : LiveData<BaseModel<List<PersonModel>>> = _loading_status
+
+    private val _work_status = MutableLiveData<BaseModel<Boolean>>()
+    val work_status :LiveData<BaseModel<Boolean>> = _work_status
+
+    private val _is_list_empty = MutableLiveData<Boolean>(false)
+    val is_list_empty: LiveData<Boolean> = _is_list_empty
+
+    private fun isListEmptyCheck(list: List<PersonModel>){
+        _is_list_empty.value = list.isEmpty()
+    }
+
+    private fun sendWorkStatus(isOnline: Boolean){
+        viewModelScope.launch {
+            _work_status.value = BaseModel(Status.LOADING, null)
+            val resp = withContext(CoroutineScope(Dispatchers.IO).coroutineContext) {
+                repository.changeStatus(isOnline)
+            }
+            if (resp.status_code == 200){
+                _work_status.value = BaseModel(Status.SUCCESS, resp)
+                loadList()
+            }
+            else{
+                _work_status.value = BaseModel(Status.ERROR, resp)
+            }
+        }
+    }
 
     fun loadList(){
         viewModelScope.launch {
             _loading_status.value = BaseModel(Status.LOADING, null)
-            val list = ArrayList<PersonModel>()
-                withContext(CoroutineScope(Dispatchers.IO).coroutineContext) {
-                    list.add(PersonModel(0, "Rakhimjonov Shokhsulton", 1624355469,
-                        "https://i06.fotocdn.net/s122/90c754bad68cd4db/user_xl/2782181550.jpg"))
-                    list.add(PersonModel(1, "Kadirov Bobur", 	1624323069,
-                        "https://i.ytimg.com/vi/YwdBoT-ZfdM/maxresdefault.jpg"))
-                    list.add(PersonModel(2, "Sotvoldiev Asadbek", 	1624326669,
-                        "https://cdn-images-1.medium.com/fit/t/1500/999/1*9alQR86z6DCRqC9pJNlkUw@2x.jpeg"))
-                    list.add(PersonModel(3, "Parpiev Azamat", 	1624333869,
-                        "https://st4.depositphotos.com/11585370/21030/i/950/depositphotos_210306566-stock-photo-close-shot-handsome-smiling-unshaven.jpg"))
+             val resp =  withContext(CoroutineScope(Dispatchers.IO).coroutineContext) {
+                 repository.getAllUsers()
                 }
-            if (list.isNotEmpty()){
-                _loading_status.value = BaseModel(Status.SUCCESS, BaseResponse<List<PersonModel>>(200, list, null))
+            if (resp.status_code == 200){
+                if (resp.data?.isNotEmpty() == true){
+                    val myList = ArrayList<PersonModel>()
+                    for (model in resp.data){if (model.is_online){myList.add(model)}}
+                    _loading_status.value = BaseModel(Status.SUCCESS, BaseResponse<List<PersonModel>>(
+                            200, myList, null))
+                    Log.d("oldschool", resp.data[0].is_online.toString())
+                    isListEmptyCheck(myList)
+                }
             }
             else{
+                _is_list_empty.value = false
                 _loading_status.value = BaseModel(Status.ERROR, null)
             }
 
         }
     }
 
-    fun startWork(){
-        AppPreferences.start_time = System.currentTimeMillis()
-        Log.d("oldschool", "startWork")
+    private fun startWork(){
+        if (AppPreferences.start_time != null){
+            sendWorkStatus(false)
+        }
+        else{
+            sendWorkStatus(true)
+        }
     }
 
-    fun endWork(){
-        if (AppPreferences.start_time != null){
-            val endTime = System.currentTimeMillis()
-            AppPreferences.end_time = endTime
-            AppPreferences.worked_hours = endTime - AppPreferences.start_time!!
-            AppPreferences.start_time = null
-            Log.d("oldschool", AppPreferences.worked_hours.toString())
-        }
+    fun workAlertDialog(context: Context){
+        val dialogBuilder = AlertDialog.Builder(context)
+        dialogBuilder.setMessage(context.getString(R.string.start_work_question))
+            // if the dialog is cancelable
+            .setCancelable(true)
+            .setPositiveButton(context.getString(R.string.start), DialogInterface.OnClickListener { _, _ ->
+//                            dialog, id -> LocationHelper(requireContext(), requireActivity()).locationRequest()
+                startWork()
+            })
+            .setNegativeButton(context.getString(R.string.cancel)) { _, _ ->}
+        val alert = dialogBuilder.create()
+        alert.show()
     }
 }

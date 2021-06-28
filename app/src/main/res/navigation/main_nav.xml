@@ -17,11 +17,25 @@
             app:exitAnim="@anim/to_left"
             app:popEnterAnim="@anim/from_left"
             app:popExitAnim="@anim/to_right" />
+        <action
+            android:id="@+id/action_listFragment_to_userFragment"
+            app:destination="@id/userFragment"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/to_right"
+            app:popEnterAnim="@anim/from_right"
+            app:popExitAnim="@anim/to_left" />
+        <action
+            android:id="@+id/action_listFragment_to_accountFragment"
+            app:destination="@id/accountFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.brm.mycolleagues.ui.fragment.profile.ProfileFragment"
-        android:label="ProfileFragment" >
+        android:label="Профиль">
         <action
             android:id="@+id/action_profileFragment_to_listFragment"
             app:destination="@id/listFragment"
@@ -30,5 +44,27 @@
         <argument
             android:name="model"
             app:argType="com.brm.mycolleagues.ui.fragment.list.model.PersonModel" />
+    </fragment>
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.brm.mycolleagues.ui.fragment.users.UserFragment"
+        android:label="Список сотрудников"
+        tools:layout="@layout/fragment_user">
+        <action
+            android:id="@+id/action_userFragment_to_listFragment"
+            app:destination="@id/listFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.brm.mycolleagues.ui.fragment.account.AccountFragment"
+        android:label="fragment_account"
+        tools:layout="@layout/fragment_account" >
+        <action
+            android:id="@+id/action_accountFragment_to_listFragment"
+            app:destination="@id/listFragment"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/to_right" />
     </fragment>
 </navigation>

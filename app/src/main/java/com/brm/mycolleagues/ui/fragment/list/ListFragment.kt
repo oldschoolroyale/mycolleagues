@@ -1,53 +1,98 @@
 package com.brm.mycolleagues.ui.fragment.list
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.AlertDialog
-import android.content.DialogInterface
+import android.app.Dialog
 import android.content.Intent
-import android.content.IntentSender
-import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.brm.mycolleagues.R
 import com.brm.mycolleagues.databinding.FragmentListBinding
+import com.brm.mycolleagues.ui.activity.AccountActivity
+import com.brm.mycolleagues.ui.activity.LoginActivity
 import com.brm.mycolleagues.ui.fragment.list.model.PersonModel
 import com.brm.mycolleagues.ui.fragment.list.vm.ListViewModel
 import com.brm.mycolleagues.utils.AppPreferences
 import com.brm.mycolleagues.utils.BaseModel
 import com.brm.mycolleagues.utils.Status
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.*
-import com.vmadalin.easypermissions.EasyPermissions
-import com.vmadalin.easypermissions.dialogs.SettingsDialog
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_list.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 
-class ListFragment : Fragment(), SearchView.OnQueryTextListener, EasyPermissions.PermissionCallbacks {
-    companion object{
-        private const val REQUEST_CHECK_SETTING = 1001
-        private const val PERMISSION_LOCATION_REQUEST = 1
-    }
+@AndroidEntryPoint
+class ListFragment : Fragment(),
+        SearchView.OnQueryTextListener{
+
 
     private var _binding : FragmentListBinding? = null
     val binding get() = _binding!!
 
     private val listViewModel by viewModels<ListViewModel>()
     private val adapter = com.brm.mycolleagues.ui.fragment.list.adapter.ListAdapter()
+    private lateinit var dialog: Dialog
+
 
     private val listObservable = Observer<BaseModel<List<PersonModel>>>{
         when(it.status){
+            Status.LOADING ->{
+
+            }
+            Status.SUCCESS ->{
+                adapter.newList(it.response!!.data!!)
+                binding.fragmentListSwipeRefresh.isRefreshing = false
+                dialog.dismiss()
+            }
+
+            Status.ERROR ->{
+                binding.fragmentListSwipeRefresh.isRefreshing = false
+                dialog.show()
+            }
+        }
+    }
+
+    private val listEmptyChecker = Observer<Boolean>{
+
+        when(it){
+            true ->{
+                binding.fragmentListEmptyListLayout.visibility = View.VISIBLE
+                binding.fragmentListRecycler.visibility = View.INVISIBLE
+            }
+            false ->{
+                binding.fragmentListEmptyListLayout.visibility = View.INVISIBLE
+                binding.fragmentListRecycler.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private val listWorkStatus = Observer<BaseModel<Boolean>>{
+        when(it.status){
             Status.LOADING ->{}
-            Status.SUCCESS ->{adapter.newList(it.response!!.data!!)}
-            Status.ERROR ->{}
+            Status.SUCCESS ->{
+                dialog.dismiss()
+                if (AppPreferences.start_time != null){
+                    val endTime = System.currentTimeMillis()
+                    AppPreferences.end_time = endTime
+                    AppPreferences.worked_hours = endTime - AppPreferences.start_time!!
+                    AppPreferences.start_time = null
+                }
+                else{
+                    AppPreferences.start_time = System.currentTimeMillis()
+                    AppPreferences.end_time = null
+                }
+            }
+            Status.ERROR ->{
+                dialog.show()
+            }
         }
     }
 
@@ -63,31 +108,39 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener, EasyPermissions
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.lifecycleOwner = this
+        binding.viewModel = listViewModel
+        binding.context = requireContext()
+
+        val mills = System.currentTimeMillis()
+        val df = Date(mills)
+        val vv: String = SimpleDateFormat("Сегодня dd-MM-yyyy", Locale.getDefault()).format(df)
+        (activity as AppCompatActivity).supportActionBar?.title =vv
 
         view.fragmentListRecycler.adapter = adapter
         view.fragmentListRecycler.layoutManager = LinearLayoutManager(requireContext())
         listViewModel.loadList()
+
+        dialog = Dialog(requireContext(), R.style.Theme_MyColleagues_NoActionBar)
+        dialog.setContentView(R.layout.dialog_server_error)
+        val btnRetry = dialog.findViewById<TextView>(R.id.dialogServerRetryText)
+        val btnCancel = dialog.findViewById<TextView>(R.id.dialogServerCancel)
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+        btnRetry.setOnClickListener {
+            listViewModel.loadList()
+            dialog.dismiss()
+        }
+
+
+
         listViewModel.loading_status.observe(viewLifecycleOwner, listObservable)
+        listViewModel.is_list_empty.observe(viewLifecycleOwner, listEmptyChecker)
+        listViewModel.work_status.observe(viewLifecycleOwner, listWorkStatus)
 
-
-        binding.fragmentListFab.setOnClickListener {
-//                val dialogBuilder = AlertDialog.Builder(view.context)
-//                dialogBuilder.setMessage(view.context.getString(R.string.start_work_question))
-//                    // if the dialog is cancelable
-//                    .setCancelable(true)
-//                    .setPositiveButton(view.context.getString(R.string.start), DialogInterface.OnClickListener {
-//                            dialog, id -> locationRequest()
-//                    })
-//                    .setNegativeButton(view.context.getString(R.string.cancel)) { _, _ ->}
-//                val alert = dialogBuilder.create()
-//                alert.show()
-            if (AppPreferences.start_time == null){
-                listViewModel.startWork()
-            }
-            else{
-                listViewModel.endWork()
-            }
-
+        binding.fragmentListSwipeRefresh.setOnRefreshListener {
+            listViewModel.loadList()
         }
     }
 
@@ -107,141 +160,50 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener, EasyPermissions
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.list_menu, menu)
-        val search = menu.findItem(R.id.paymentAddMenuSearch)
+        val search = menu.findItem(R.id.listMenuSearch)
         val searchView = search.actionView as? SearchView
         searchView?.isSubmitButtonEnabled = true
         searchView?.setOnQueryTextListener(this)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CHECK_SETTING){
-            when(resultCode){
-                Activity.RESULT_OK ->{showMessage("Gps is on, ListFragment")}
-                Activity.RESULT_CANCELED ->{showMessage("Gps is required, ListFragment")}
-            }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.listMenuAllUsers ->{findNavController().navigate(R.id.action_listFragment_to_userFragment)}
+            R.id.listMenuProfile ->{startActivity(Intent(requireActivity(), AccountActivity::class.java))}
+            R.id.listMenuSignOut ->{signOut()}
         }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun signOut() {
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+                dialogBuilder.setMessage(requireContext().getString(R.string.sign_out_conformation))
+                    // if the dialog is cancelable
+                    .setCancelable(true)
+                    .setPositiveButton(requireContext().getString(R.string.yes)) { _, _ ->
+                        AppPreferences.removeAll()
+                        startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                        activity?.finish()
+                    }
+                        .setNegativeButton(requireContext().getString(R.string.cancel)) { _, _ ->}
+                val alert = dialogBuilder.create()
+                alert.show()
+
     }
 
     private fun showMessage(message:String){
         Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
     }
 
-    private fun locationRequest(){
-        REQUEST_CHECK_SETTING
-        val locationRequest = LocationRequest.create()
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 5000
-        locationRequest.fastestInterval = 2000
-
-        val builder: LocationSettingsRequest.Builder = LocationSettingsRequest.Builder()
-            .addLocationRequest(locationRequest)
-        builder.setAlwaysShow(true)
-        val result = LocationServices.getSettingsClient(requireContext())
-            .checkLocationSettings(builder.build())
-        result.addOnCompleteListener {
-            try {
-                getLastLocation()
-            }
-            catch (e: ApiException){
-                when(e.statusCode){
-                    LocationSettingsStatusCodes.RESOLUTION_REQUIRED ->{
-                        try {
-                            val resolvableApi = e as ResolvableApiException
-                            resolvableApi.startResolutionForResult(requireActivity(), REQUEST_CHECK_SETTING)
-                        }
-                        catch (ex: IntentSender.SendIntentException){
-                           Log.d("brm", "Error: Settings change unavailable")
-                        }
-                        return@addOnCompleteListener
-                    }
-                    LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE ->{
-                        Log.d("brm", "Settings change unavailable")
-                        return@addOnCompleteListener
-                    }
-                }
-            }
-        }
-
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun getLastLocation() {
-
-        Log.d("oldschool", "tut")
-        if (hasLocationPermission()){
-            val mLocationRequest = LocationRequest.create()
-            mLocationRequest.interval = 60000
-            mLocationRequest.fastestInterval = 5000
-            mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            val mLocationCallback: LocationCallback = object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult?) {
-                    if (locationResult == null) {
-                        return
-                    }
-                    for (location in locationResult.locations) {
-                        if (location != null) {
-                            val dist = FloatArray(1)
-                            Location.distanceBetween(location.latitude, location.longitude, 41.342770, 69.344153, dist)
-                            if(dist[0]/1000 > 1){
-                                Toast.makeText(requireContext(), "Вы вне минимального радиуса к рабочему месту", Toast.LENGTH_LONG).show()
-                            }
-                            else{
-                                Toast.makeText(requireContext(), "Начало работы", Toast.LENGTH_LONG).show()
-                            }
-                        }
-                    }
-                }
-            }
-            LocationServices.getFusedLocationProviderClient(requireContext())
-                .requestLocationUpdates(mLocationRequest, mLocationCallback, null)
-        }
-        else{
-            requestLocationPermission()
-        }
-    }
-
-    private fun hasLocationPermission()=
-        EasyPermissions.hasPermissions(
-            requireContext(),
-            android.Manifest.permission.ACCESS_FINE_LOCATION
-        )
-
-    private fun requestLocationPermission(){
-        EasyPermissions.requestPermissions(
-            requireActivity(),
-            "Это приложение не может работать без локации",
-            PERMISSION_LOCATION_REQUEST,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
-        )
-    }
-
 
     override fun onDestroyView() {
         _binding = null
         listViewModel.loading_status.removeObserver(listObservable)
+        listViewModel.is_list_empty.removeObserver(listEmptyChecker)
+        listViewModel.work_status.removeObserver(listWorkStatus)
         super.onDestroyView()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-    }
 
-    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
-        if (EasyPermissions.somePermissionPermanentlyDenied(requireActivity(), perms)){
-            SettingsDialog.Builder(requireActivity()).build().show()
-        }
-        else{
-            requestLocationPermission()
-        }
-    }
 
-    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
-        Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_LONG).show()
-    }
 }
