@@ -5,14 +5,19 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.brm.mycolleagues.R
 import com.brm.mycolleagues.ui.activity.vm.AccountViewModel
+import com.brm.mycolleagues.ui.fragment.list.model.PersonModel
+import com.brm.mycolleagues.utils.AppPreferences
 import com.brm.mycolleagues.utils.BaseModel
+import com.brm.mycolleagues.utils.JsonConverter
 import com.brm.mycolleagues.utils.Status
+import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_account.*
@@ -21,10 +26,13 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AccountActivity : AppCompatActivity() {
     private val accountViewModel by viewModels<AccountViewModel>()
+    @Inject lateinit var jsonConverter: JsonConverter
+    private lateinit var personModel: PersonModel
 
     private val uploadObserver = Observer<BaseModel<String>>{
         when(it.status){
@@ -44,9 +52,22 @@ class AccountActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account)
 
+        personModel = jsonConverter.reconvertResponse()
+
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = ""
+
+        name.text = personModel.name
+        val image = findViewById<ImageView>(R.id.accountImage)
+        val url = personModel.avatar
+        if (url != ""){
+            Picasso.with(this).load(url).placeholder(R.drawable.ic_person).into(image)
+        }
+        else{
+            image.setImageResource(R.color.white)
+        }
+
 
         fab.setOnClickListener {
             val intent1 = Intent()

@@ -18,15 +18,18 @@ import com.brm.mycolleagues.R
 import com.brm.mycolleagues.databinding.FragmentListBinding
 import com.brm.mycolleagues.ui.activity.AccountActivity
 import com.brm.mycolleagues.ui.activity.LoginActivity
+import com.brm.mycolleagues.ui.fragment.list.model.MonthModel
 import com.brm.mycolleagues.ui.fragment.list.model.PersonModel
 import com.brm.mycolleagues.ui.fragment.list.vm.ListViewModel
 import com.brm.mycolleagues.utils.AppPreferences
 import com.brm.mycolleagues.utils.BaseModel
+import com.brm.mycolleagues.utils.JsonConverter
 import com.brm.mycolleagues.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_list.view.*
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -40,6 +43,10 @@ class ListFragment : Fragment(),
     private val listViewModel by viewModels<ListViewModel>()
     private val adapter = com.brm.mycolleagues.ui.fragment.list.adapter.ListAdapter()
     private lateinit var dialog: Dialog
+    private lateinit var personModel: PersonModel
+    private lateinit var monthModel: MonthModel
+
+    @Inject lateinit var jsonConverter: JsonConverter
 
 
     private val listObservable = Observer<BaseModel<List<PersonModel>>>{
@@ -78,17 +85,8 @@ class ListFragment : Fragment(),
         when(it.status){
             Status.LOADING ->{}
             Status.SUCCESS ->{
+                AppPreferences.is_online = it.response?.data!!
                 dialog.dismiss()
-                if (AppPreferences.start_time != null){
-                    val endTime = System.currentTimeMillis()
-                    AppPreferences.end_time = endTime
-                    AppPreferences.worked_hours = endTime - AppPreferences.start_time!!
-                    AppPreferences.start_time = null
-                }
-                else{
-                    AppPreferences.start_time = System.currentTimeMillis()
-                    AppPreferences.end_time = null
-                }
             }
             Status.ERROR ->{
                 dialog.show()
@@ -125,6 +123,12 @@ class ListFragment : Fragment(),
         dialog.setContentView(R.layout.dialog_server_error)
         val btnRetry = dialog.findViewById<TextView>(R.id.dialogServerRetryText)
         val btnCancel = dialog.findViewById<TextView>(R.id.dialogServerCancel)
+
+        val month : Int = SimpleDateFormat("M", Locale.getDefault()).format(df).toInt()
+        val year : Int = SimpleDateFormat("yyyy", Locale.getDefault()).format(df).toInt()
+        personModel = jsonConverter.reconvertResponse()
+        monthModel = MonthModel(month, year, 0)
+
         btnCancel.setOnClickListener {
             dialog.dismiss()
         }
@@ -133,11 +137,10 @@ class ListFragment : Fragment(),
             dialog.dismiss()
         }
 
-
-
         listViewModel.loading_status.observe(viewLifecycleOwner, listObservable)
         listViewModel.is_list_empty.observe(viewLifecycleOwner, listEmptyChecker)
         listViewModel.work_status.observe(viewLifecycleOwner, listWorkStatus)
+
 
         binding.fragmentListSwipeRefresh.setOnRefreshListener {
             listViewModel.loadList()
@@ -169,7 +172,7 @@ class ListFragment : Fragment(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.listMenuAllUsers ->{findNavController().navigate(R.id.action_listFragment_to_userFragment)}
-            R.id.listMenuProfile ->{startActivity(Intent(requireActivity(), AccountActivity::class.java))}
+            R.id.listMenuProfile ->{ startActivity(Intent(requireActivity(), AccountActivity::class.java))}
             R.id.listMenuSignOut ->{signOut()}
         }
         return super.onOptionsItemSelected(item)
@@ -191,11 +194,6 @@ class ListFragment : Fragment(),
 
     }
 
-    private fun showMessage(message:String){
-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-    }
-
-
     override fun onDestroyView() {
         _binding = null
         listViewModel.loading_status.removeObserver(listObservable)
@@ -203,7 +201,4 @@ class ListFragment : Fragment(),
         listViewModel.work_status.removeObserver(listWorkStatus)
         super.onDestroyView()
     }
-
-
-
 }

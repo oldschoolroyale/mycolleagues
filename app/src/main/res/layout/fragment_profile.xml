@@ -7,6 +7,9 @@
         <variable
             name="model"
             type="com.brm.mycolleagues.ui.fragment.list.model.PersonModel" />
+        <variable
+            name="time"
+            type="String" />
 
     </data>
 
@@ -126,48 +129,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/spacing_large" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <ImageButton
-                            android:layout_width="@dimen/spacing_mxlarge"
-                            android:layout_height="@dimen/spacing_mxlarge"
-                            android:background="@android:color/transparent"
-                            android:tint="@color/grey_60"
-                            app:srcCompat="@drawable/ic_directions_bike" />
-
-                        <View
-                            android:layout_width="@dimen/spacing_large"
-                            android:layout_height="match_parent" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Увлечения"
-                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                                android:textColor="@color/colorPrimary"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/spacing_middle"
-                                android:lineSpacingExtra="2dp"
-                                android:text="Люблю читать книги, гулять и хорошо проводить время."
-                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/grey_60" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
 
                     <View
                         android:layout_width="match_parent"
@@ -176,54 +137,136 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <ImageButton
-                            android:layout_width="@dimen/spacing_mxlarge"
-                            android:layout_height="@dimen/spacing_mxlarge"
-                            android:background="@android:color/transparent"
-                            android:tint="@color/grey_60"
-                            app:srcCompat="@drawable/ic_statistic" />
-
-                        <View
-                            android:layout_width="@dimen/spacing_large"
-                            android:layout_height="match_parent" />
-
+                        android:orientation="horizontal"
+                        android:weightSum="2">
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            >
+                            android:orientation="horizontal">
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <ImageButton
+                                android:layout_width="@dimen/spacing_mxlarge"
+                                android:layout_height="@dimen/spacing_mxlarge"
+                                android:background="@android:color/transparent"
+                                android:tint="@color/grey_60"
+                                app:srcCompat="@drawable/ic_statistic" />
+
+                            <View
+                                android:layout_width="@dimen/spacing_large"
+                                android:layout_height="match_parent" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Часов за неделю"
-                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                                android:textColor="@color/colorPrimary"
-                                android:textStyle="bold" />
-                            <me.itangqi.waveloadingview.WaveLoadingView
-                                android:id="@+id/waveLoadingView"
-                                android:layout_width="120dp"
-                                android:layout_height="120dp"
-                                app:wlv_borderColor="@color/purple_200"
-                                app:wlv_borderWidth="1dp"
-                                app:wlv_progressValue="40"
-                                app:wlv_shapeType="circle"
-                                android:layout_marginTop="10dp"
-                                app:wlv_round_rectangle="true"
-                                app:wlv_triangle_direction="north"
-                                app:wlv_titleCenterStrokeColor="@color/purple_200"
-                                app:wlv_titleCenterStrokeWidth="3dp"
-                                app:wlv_titleCenter="14 часов"
-                                app:wlv_titleCenterColor="@color/white"
-                                app:wlv_titleCenterSize="12sp"
-                                app:wlv_waveAmplitude="70"
-                                app:wlv_waveColor="@color/purple_200"/>
+                                android:orientation="vertical"
+                                >
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Часов за эту неделю"
+                                    android:layout_gravity="center"
+                                    android:singleLine="true"
+                                    android:textSize="14sp"
+                                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textStyle="bold" />
+                                <me.itangqi.waveloadingview.WaveLoadingView
+                                    android:id="@+id/waveLoadingView"
+                                    android:layout_width="120dp"
+                                    android:layout_height="120dp"
+                                    app:wlv_borderColor="@color/purple_200"
+                                    app:wlv_borderWidth="1dp"
+                                    app:wlv_progressValue="40"
+                                    app:wlv_shapeType="circle"
+                                    android:layout_marginTop="10dp"
+                                    app:wlv_round_rectangle="true"
+                                    app:wlv_triangle_direction="north"
+                                    android:layout_gravity="center_horizontal"
+                                    app:wlv_titleCenterStrokeColor="@color/purple_200"
+                                    app:wlv_titleCenterStrokeWidth="3dp"
+                                    app:wlv_titleCenterColor="@color/white"
+                                    app:wlv_titleCenterSize="12sp"
+                                    app:wlv_waveAmplitude="70"
+                                    app:wlv_waveColor="@color/purple_200"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:singleLine="true"
+                                    android:text="Последнее обновление"
+                                    android:textSize="12sp"
+                                    android:gravity="center"
+                                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textStyle="bold"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="5dp"
+                                    android:gravity="center"
+                                    android:singleLine="true"
+                                    android:text="@{time}"
+                                    android:textSize="12sp"
+                                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textStyle="bold"/>
+
+                            </LinearLayout>
 
                         </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
 
+                            <View
+                                android:layout_width="@dimen/spacing_large"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="10dp"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+
+                                >
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:singleLine="true"
+                                    android:text="за месяц 6/2021"
+                                    android:textSize="16sp"
+                                    android:layout_gravity="center"
+                                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                                    android:textColor="@color/colorPrimary"
+                                    android:textStyle="bold" />
+                                <me.itangqi.waveloadingview.WaveLoadingView
+                                    android:id="@+id/waveLoadingViewMonth"
+                                    android:layout_width="120dp"
+                                    android:layout_height="120dp"
+                                    app:wlv_borderColor="@color/purple_200"
+                                    app:wlv_borderWidth="1dp"
+                                    app:wlv_shapeType="circle"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="10dp"
+                                    app:wlv_round_rectangle="true"
+                                    app:wlv_triangle_direction="north"
+                                    app:wlv_titleCenterStrokeColor="@color/purple_200"
+                                    app:wlv_titleCenterStrokeWidth="3dp"
+                                    app:wlv_titleCenterColor="@color/white"
+                                    app:wlv_titleCenterSize="12sp"
+                                    app:wlv_waveAmplitude="70"
+                                    app:wlv_waveColor="@color/purple_200"/>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
                     </LinearLayout>
+
 
                 </LinearLayout>
 

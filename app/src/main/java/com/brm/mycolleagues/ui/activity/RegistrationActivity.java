@@ -60,13 +60,14 @@ public class RegistrationActivity extends AppCompatActivity {
                 break;
 
             case SUCCESS:
+                if (resp.getResponse() != null && resp.getResponse().getData() != null){
                     if (resp.getResponse().getData()){
                         Toast.makeText(this, "Пользователь с таким username'ом существует!", Toast.LENGTH_LONG).show();
                     }
                     else {
                         mViewModel.login(myUsername);
                     }
-
+                }
                 break;
 
             case ERROR:
@@ -84,7 +85,12 @@ public class RegistrationActivity extends AppCompatActivity {
               break;
           case SUCCESS:
               AppPreferences.INSTANCE.setUsername(myUsername);
-              jsonConverter.convertResponse(resp.getResponse().getData());
+              if (resp.getResponse() != null && resp.getResponse().getData() != null){
+                  if (resp.getResponse().getData().is_online()){
+                      AppPreferences.INSTANCE.set_online(true);
+                  }
+                  jsonConverter.convertResponse(resp.getResponse().getData());
+              }
               goHome();
               break;
           case ERROR:

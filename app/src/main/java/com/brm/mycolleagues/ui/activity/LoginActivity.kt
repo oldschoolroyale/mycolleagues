@@ -1,12 +1,12 @@
 package com.brm.mycolleagues.ui.activity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.brm.mycolleagues.R
 import com.brm.mycolleagues.ui.activity.vm.RegistrationViewModel
@@ -19,7 +19,6 @@ import com.wang.avi.AVLoadingIndicatorView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_login.*
 import javax.inject.Inject
-import kotlin.math.sign
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
@@ -57,7 +56,10 @@ class LoginActivity : AppCompatActivity() {
             Status.LOADING -> {}
             Status.SUCCESS -> {
                 AppPreferences.username = username
-                jsonConverter.convertResponse(it.response?.data!!)
+                if (it.response?.data!!.is_online){
+                    AppPreferences.is_online = true
+                }
+                jsonConverter.convertResponse(it.response.data)
                 goMain()
             }
             Status.ERROR ->{

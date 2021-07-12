@@ -2,6 +2,7 @@ package com.brm.mycolleagues.utils
 
 import android.content.DialogInterface
 import android.view.View
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -11,6 +12,7 @@ import com.brm.mycolleagues.R
 import com.brm.mycolleagues.ui.fragment.list.ListFragmentDirections
 import com.brm.mycolleagues.ui.fragment.list.model.PersonModel
 import com.brm.mycolleagues.ui.fragment.list.vm.ListViewModel
+import com.brm.mycolleagues.ui.fragment.users.UserFragmentDirections
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.squareup.picasso.Picasso
 import com.wang.avi.AVLoadingIndicatorView
@@ -35,9 +37,8 @@ class BindingAdapter {
         @BindingAdapter("android:workingFrom")
         @JvmStatic
         fun workingFrom(view: TextView, from: Long){
-            val dv: Long = java.lang.Long.valueOf(from) * 1000
-            val df = Date(dv)
-            val vv: String = SimpleDateFormat("hh:mma", Locale.getDefault()).format(df)
+            val df = Date(from)
+            val vv: String = SimpleDateFormat("HH:mm", Locale.getDefault()).format(df)
             view.text = "На работе с $vv"
         }
 
@@ -47,6 +48,11 @@ class BindingAdapter {
             view.setOnClickListener{
                 view.findNavController().navigate(ListFragmentDirections.actionListFragmentToProfileFragment(model))
             }
+        }
+        @BindingAdapter("android:fromWorkerNoTitleToProfile")
+        @JvmStatic
+        fun fromWorkerNoTitleToProfile(view: RelativeLayout, model: PersonModel){
+            view.setOnClickListener { view.findNavController().navigate(UserFragmentDirections.actionUserFragmentToProfileFragment(model)) }
         }
 
         @BindingAdapter("android:loaderVisibility")

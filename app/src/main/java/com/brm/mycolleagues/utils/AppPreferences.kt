@@ -27,25 +27,13 @@ object AppPreferences {
         get() = Key.USERNAME.getString()
         set(value) = Key.USERNAME.setString(value)
 
-    var current_date: Long?
-        get() = Key.CURRENT_DATE.getLong()
-        set(value) = Key.CURRENT_DATE.setLong(value)
-
-   var worked_hours: Long?
-       get() = Key.WORKED_HOURS.getLong()
-       set(value) = Key.WORKED_HOURS.setLong(value)
-
-    var start_time: Long?
-        get() = Key.START_TIME.getLong()
-        set(value) = Key.START_TIME.setLong(value)
-
-    var end_time: Long?
-        get() = Key.END_TIME.getLong()
-        set(value) = Key.END_TIME.setLong(value)
+    var is_online: Boolean
+        get() = Key.IS_ONLINE.getBooleanDefaultFalse()
+        set(value) = Key.IS_ONLINE.setBoolean(value)
 
 
     private enum class Key{
-        PROFILE, USERNAME, CURRENT_DATE, WORKED_HOURS, START_TIME, END_TIME;
+        IS_ONLINE, PROFILE, USERNAME;
 
         fun getBoolean(): Boolean? = if (sharedPreferences!!.contains(name)) sharedPreferences!!.getBoolean(name, false) else null
         fun getBooleanDefaultFalse(): Boolean = if (sharedPreferences!!.contains(name)) sharedPreferences!!.getBoolean(name, true) else false

@@ -5,13 +5,11 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class PersonModel(
-        val id: Long,
-        val username: String,
-        val name: String,
-        val is_online: Boolean,
-        val avatar: String,
-        val work_start: Long,
-        val last_visit: Long,
-        val month_id: Int,
-        val week_id: Int
+        var id: Int,
+        var username: String,
+        var name: String,
+        var is_online: Boolean,
+        var avatar: String,
+        var work_start: Long,
+        var last_visit: Long
 ):Parcelable

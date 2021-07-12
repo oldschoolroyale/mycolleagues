@@ -16,6 +16,7 @@ import com.brm.mycolleagues.R
 import com.brm.mycolleagues.databinding.FragmentUserBinding
 import com.brm.mycolleagues.ui.fragment.list.adapter.ListAdapter
 import com.brm.mycolleagues.ui.fragment.list.model.PersonModel
+import com.brm.mycolleagues.ui.fragment.users.adapter.UserAdapter
 import com.brm.mycolleagues.ui.fragment.users.vm.UserViewModel
 import com.brm.mycolleagues.utils.BaseModel
 import com.brm.mycolleagues.utils.Status
@@ -26,7 +27,7 @@ import kotlinx.android.synthetic.main.fragment_user.view.*
 class UserFragment : Fragment() {
 
     private val userViewModel by viewModels<UserViewModel>()
-    private val adapter = ListAdapter()
+    private val adapter = UserAdapter()
     private lateinit var dialog: Dialog
 
     private var _binding: FragmentUserBinding? = null

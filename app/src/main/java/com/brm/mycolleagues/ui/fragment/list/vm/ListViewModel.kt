@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brm.mycolleagues.R
 import com.brm.mycolleagues.network.repository.AllUsersRepository
+import com.brm.mycolleagues.ui.fragment.list.model.MonthModel
 import com.brm.mycolleagues.ui.fragment.list.model.PersonModel
 import com.brm.mycolleagues.utils.AppPreferences
 import com.brm.mycolleagues.utils.BaseModel
@@ -35,11 +36,11 @@ class ListViewModel @ViewModelInject constructor(private val repository: AllUser
         _is_list_empty.value = list.isEmpty()
     }
 
-    private fun sendWorkStatus(isOnline: Boolean){
+    private fun sendWorkStatus(isOnline: Boolean, workStart: Long){
         viewModelScope.launch {
             _work_status.value = BaseModel(Status.LOADING, null)
             val resp = withContext(CoroutineScope(Dispatchers.IO).coroutineContext) {
-                repository.changeStatus(isOnline)
+                repository.changeStatus(isOnline, workStart)
             }
             if (resp.status_code == 200){
                 _work_status.value = BaseModel(Status.SUCCESS, resp)
@@ -63,7 +64,6 @@ class ListViewModel @ViewModelInject constructor(private val repository: AllUser
                     for (model in resp.data){if (model.is_online){myList.add(model)}}
                     _loading_status.value = BaseModel(Status.SUCCESS, BaseResponse<List<PersonModel>>(
                             200, myList, null))
-                    Log.d("oldschool", resp.data[0].is_online.toString())
                     isListEmptyCheck(myList)
                 }
             }
@@ -76,24 +76,25 @@ class ListViewModel @ViewModelInject constructor(private val repository: AllUser
     }
 
     private fun startWork(){
-        if (AppPreferences.start_time != null){
-            sendWorkStatus(false)
+        val time = System.currentTimeMillis()
+        if (AppPreferences.is_online){
+            sendWorkStatus(false, time)
         }
         else{
-            sendWorkStatus(true)
+            sendWorkStatus(true, time)
         }
     }
 
     fun workAlertDialog(context: Context){
         val dialogBuilder = AlertDialog.Builder(context)
-        dialogBuilder.setMessage(context.getString(R.string.start_work_question))
+        dialogBuilder.setMessage("Поменять статус?")
             // if the dialog is cancelable
             .setCancelable(true)
-            .setPositiveButton(context.getString(R.string.start), DialogInterface.OnClickListener { _, _ ->
+            .setPositiveButton("Да", DialogInterface.OnClickListener { _, _ ->
 //                            dialog, id -> LocationHelper(requireContext(), requireActivity()).locationRequest()
                 startWork()
             })
-            .setNegativeButton(context.getString(R.string.cancel)) { _, _ ->}
+            .setNegativeButton("Нет") { _, _ ->}
         val alert = dialogBuilder.create()
         alert.show()
     }

@@ -1,7 +1,7 @@
 package com.brm.mycolleagues.ui.fragment.list.model
 
 data class MonthModel(
-        val month_number: Int,
-        val year_number: Int,
-        val worked_time: Long
+        var month_number: Int,
+        var year_number: Int,
+        var worked_time: Long
 )
