@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--genaral spacing-->
+    <!--general spacing-->
+    <dimen name="space_vertical">10dp</dimen>
+    <dimen name="space_horizontal">18dp</dimen>
+
+    <dimen name="text_size_regular">@dimen/text_size_medium</dimen>
+    <dimen name="text_size_header">@dimen/text_size_large</dimen>
+    <dimen name="text_size_label">@dimen/text_size_super_large</dimen>
+
+
+    <!--fixed spacing -->
+    <dimen name="space_small">5dp</dimen>
+    <dimen name="space_medium">15dp</dimen>
+    <dimen name="space_large">25</dimen>
+
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="text_size_super_large">22sp</dimen>
+
+    <!-- custom spacing-->
+    <dimen name="button_height">55dp</dimen>
     <dimen name="spacing_xsmall">2dp</dimen>
     <dimen name="spacing_small">3dp</dimen>
     <dimen name="spacing_medium">5dp</dimen>

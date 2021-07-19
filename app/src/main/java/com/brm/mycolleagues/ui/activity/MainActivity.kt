@@ -11,8 +11,6 @@ import com.brm.mycolleagues.R
 import com.brm.mycolleagues.service.NetworkChangeListener
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import java.text.SimpleDateFormat
-import java.util.*
 
 @AndroidEntryPoint
 @WithFragmentBindings
@@ -26,8 +24,8 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(findNavController(R.id.mainNavHost))
 
-        val dialog = Dialog(this, R.style.Theme_MyColleagues_NoActionBar)
-        dialog.setContentView(R.layout.dialog_custom_view)
+        val dialog = Dialog(this, R.style.AppTheme_NoActionbar)
+        dialog.setContentView(R.layout.dialog_connection_error)
         networkChangeListener = object : NetworkChangeListener(){
             override fun onNetworkAvailable() {
                 dialog.dismiss()

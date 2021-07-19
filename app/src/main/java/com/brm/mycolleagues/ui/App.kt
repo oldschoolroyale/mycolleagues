@@ -11,4 +11,8 @@ class App: MultiDexApplication() {
         super.onCreate()
         AppPreferences.setUp(this)
     }
+
+    companion object{
+        const val BASE_URL = "https://mycolleagues-test.herokuapp.com/"
+    }
 }

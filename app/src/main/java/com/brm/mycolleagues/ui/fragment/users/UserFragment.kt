@@ -65,7 +65,7 @@ class UserFragment : Fragment() {
         userViewModel.loading_status.observe(viewLifecycleOwner, userObserver)
         userViewModel.loadUsers()
 
-        dialog = Dialog(requireContext(), R.style.Theme_MyColleagues_NoActionBar)
+        dialog = Dialog(requireContext(), R.style.AppTheme_NoActionbar)
         dialog.setContentView(R.layout.dialog_server_error)
         val btnRetry = dialog.findViewById<TextView>(R.id.dialogServerRetryText)
         val btnCancel = dialog.findViewById<TextView>(R.id.dialogServerCancel)

@@ -5,6 +5,7 @@ import com.brm.mycolleagues.di.annotation.AuthInterceptor
 import com.brm.mycolleagues.di.annotation.LoginInterceptor
 import com.brm.mycolleagues.network.api.AuthApi
 import com.brm.mycolleagues.network.api.UserApi
+import com.brm.mycolleagues.ui.App
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -81,7 +82,7 @@ class RegistrationModule {
     @AccountRetrofit
     fun provideAccountRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://172.10.10.79:8084/")
+            .baseUrl(App.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

@@ -95,14 +95,11 @@
                     <TextView
                         android:id="@+id/tv_label_title"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/spacing_xlarge"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:onClick="clickLabel"
-                        android:paddingLeft="@dimen/spacing_small"
-                        android:paddingRight="@dimen/spacing_small"
                         android:text="Имя/Фамилия"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/grey_90" />
+                        style="@style/text_style_label"/>
 
                     <LinearLayout
                         android:id="@+id/lyt_title"
@@ -119,14 +116,9 @@
 
                         <Button
                             android:id="@+id/bt_continue_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:minWidth="0dp"
                             android:onClick="clickAction"
                             android:text="Продолжить"
-                            android:textAllCaps="false"
-                            android:theme="@style/Button.Primary" />
+                            style="@style/sign_up_button"/>
 
                     </LinearLayout>
 
@@ -183,14 +175,11 @@
                     <TextView
                         android:id="@+id/tv_label_description"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/spacing_xlarge"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:onClick="clickLabel"
-                        android:paddingLeft="@dimen/spacing_small"
-                        android:paddingRight="@dimen/spacing_small"
                         android:text="Идентификатор компании"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/grey_90" />
+                        style="@style/text_style_label"/>
 
                     <LinearLayout
                         android:id="@+id/lyt_description"
@@ -209,14 +198,9 @@
 
                         <Button
                             android:id="@+id/bt_continue_description"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:minWidth="0dp"
                             android:onClick="clickAction"
                             android:text="Продолжить"
-                            android:textAllCaps="false"
-                            android:theme="@style/Button.Primary" />
+                            style="@style/sign_up_button"/>
 
                     </LinearLayout>
 
@@ -273,14 +257,11 @@
                     <TextView
                         android:id="@+id/tv_label_time"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/spacing_xlarge"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:onClick="clickLabel"
-                        android:paddingLeft="@dimen/spacing_small"
-                        android:paddingRight="@dimen/spacing_small"
                         android:text="Логин"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/grey_90" />
+                        style="@style/text_style_label"/>
 
                     <LinearLayout
                         android:id="@+id/lyt_time"
@@ -300,14 +281,9 @@
 
                         <Button
                             android:id="@+id/bt_continue_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:minWidth="0dp"
                             android:onClick="clickAction"
                             android:text="Продолжить"
-                            android:textAllCaps="false"
-                            android:theme="@style/Button.Primary" />
+                            style="@style/sign_up_button"/>
 
                     </LinearLayout>
 
@@ -364,14 +340,11 @@
                     <TextView
                         android:id="@+id/tv_label_date"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/spacing_xlarge"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:onClick="clickLabel"
-                        android:paddingLeft="@dimen/spacing_small"
-                        android:paddingRight="@dimen/spacing_small"
                         android:text="Пароль"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/grey_90" />
+                        style="@style/text_style_label"/>
 
                     <LinearLayout
                         android:id="@+id/lyt_date"
@@ -391,14 +364,10 @@
 
                         <Button
                             android:id="@+id/bt_continue_date"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:minWidth="0dp"
                             android:onClick="clickAction"
                             android:text="Продолжить"
-                            android:textAllCaps="false"
-                            android:theme="@style/Button.Primary" />
+                            style="@style/sign_up_button"
+                             />
 
                     </LinearLayout>
 
@@ -454,14 +423,11 @@
                     <TextView
                         android:id="@+id/tv_label_confirmation"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/spacing_xlarge"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:onClick="clickLabel"
-                        android:paddingLeft="@dimen/spacing_small"
-                        android:paddingRight="@dimen/spacing_small"
                         android:text="Подтверждение"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/grey_90" />
+                        style="@style/text_style_label"/>
 
                     <LinearLayout
                         android:id="@+id/lyt_confirmation"
@@ -472,14 +438,9 @@
 
                         <Button
                             android:id="@+id/bt_add_event"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:minWidth="0dp"
                             android:onClick="clickAction"
                             android:text="Создать аккаунт"
-                            android:textAllCaps="false"
-                            android:theme="@style/Button.Primary" />
+                            style="@style/sign_up_button"/>
 
 
                     </LinearLayout>

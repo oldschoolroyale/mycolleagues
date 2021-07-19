@@ -9,4 +9,5 @@
     <string name="start_work_question">Приступить к работе?</string>
     <string name="sign_out_conformation">Вы точно хотите выйти?</string>
     <string name="yes">Да</string>
+    <string name="sign_in">Войти</string>
 </resources>
