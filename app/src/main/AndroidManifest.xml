@@ -22,6 +22,7 @@
             android:theme="@style/Base.Theme.AppCompat" />
         <activity android:name=".ui.activity.AccountActivity"
             android:theme="@style/BaseTheme"/>
+        <activity android:name=".ui.activity.CreateUserActivity"/>
         <activity
             android:name=".ui.activity.LoginActivity"
             android:theme="@style/AppTheme.NoActionbar"/>
@@ -33,6 +34,14 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="www.mycolleagues.uz"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.MainActivity" />

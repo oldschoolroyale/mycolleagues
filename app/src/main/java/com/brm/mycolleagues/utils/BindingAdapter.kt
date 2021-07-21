@@ -65,6 +65,26 @@ class BindingAdapter {
             }
         }
 
+        @BindingAdapter("android:fabStart")
+        @JvmStatic
+        fun fabStart(floatingActionButton: FloatingActionButton, boolean: Boolean){
+            floatingActionButton.visibility =
+                when(boolean){
+                    true ->{View.INVISIBLE}
+                    false ->{View.VISIBLE}
+                }
+        }
+
+        @BindingAdapter("android:fabStop")
+        @JvmStatic
+        fun fabStop(floatingActionButton: FloatingActionButton, boolean: Boolean){
+            floatingActionButton.visibility =
+                when(boolean){
+                    true ->{View.VISIBLE}
+                    false ->{View.INVISIBLE}
+                }
+        }
+
     }
 
 

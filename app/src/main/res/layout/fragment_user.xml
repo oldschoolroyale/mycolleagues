@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:loaderVisibility="@{viewModel.loading_status}"
             android:layout_centerInParent="true"
-            app:indicatorName="BallPulseIndicator"
+            app:indicatorName="BallClipRotateMultipleIndicator"
             app:indicatorColor="@color/colorAccent"
             style="@style/AVLoadingIndicatorView" />
 

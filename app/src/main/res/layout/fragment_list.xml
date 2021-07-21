@@ -18,16 +18,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.fragment.list.ListFragment">
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#e6e6e6">
+            android:id="@+id/listRoot"
+            android:background="@color/grey_10">
             <com.wang.avi.AVLoadingIndicatorView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:loaderVisibility="@{viewModel.loading_status}"
-                android:layout_centerInParent="true"
-                app:indicatorName="BallPulseIndicator"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:indicatorName="BallClipRotateMultipleIndicator"
                 app:indicatorColor="@color/colorAccent"
                 style="@style/AVLoadingIndicatorView"/>
             <RelativeLayout
@@ -62,17 +66,52 @@
 
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fragmentListFab"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
+                android:id="@+id/fragmentListFabStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 android:src="@drawable/ic_done"
-                android:onClick="@{() -> viewModel.workAlertDialog(context)}"
                 app:tint="@color/white"
-                android:layout_margin="18dp"
-                android:contentDescription="@string/fab" />
-        </RelativeLayout>
+                android:contentDescription="@string/fab"
+                android:fabStart="@{viewModel.fabVisibility}"
+                 />
+            <View
+                android:id="@+id/circle"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/circle_white"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/fragmentListFabStart"
+                app:layout_constraintEnd_toEndOf="@+id/fragmentListFabStart"
+                app:layout_constraintStart_toStartOf="@+id/fragmentListFabStart"
+                app:layout_constraintTop_toTopOf="@+id/fragmentListFabStart" />
+
+            <View
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/circleRevert"
+                android:background="@drawable/grey_10"
+                android:visibility="invisible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fragmentListFabStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/ic_close"
+                app:tint="@color/white"
+                android:contentDescription="@string/fab"
+                android:fabStop="@{viewModel.fabVisibility}"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

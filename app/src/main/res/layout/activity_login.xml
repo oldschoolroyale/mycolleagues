@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:padding="@dimen/space_horizontal">
 
         <com.wang.avi.AVLoadingIndicatorView
             android:layout_width="wrap_content"
@@ -11,7 +12,7 @@
             android:id="@+id/activityLoginLoader"
             android:visibility="invisible"
             android:layout_centerInParent="true"
-            app:indicatorName="BallPulseIndicator"
+            app:indicatorName="BallClipRotateMultipleIndicator"
             app:indicatorColor="@color/colorAccent"
             style="@style/AVLoadingIndicatorView"/>
 
@@ -41,6 +42,7 @@
                 android:layout_marginTop="@dimen/space_vertical"
                 style="@style/text_style_label"
                 android:text="Добро пожаловать,"
+                android:textSize="@dimen/text_size_large"
                  />
 
             <TextView
@@ -48,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_small"
                 android:text="Войдите для продолжения"
+                android:textSize="@dimen/text_size_large"
                 style="@style/text_style_header_grey"/>
 
             <View
@@ -60,7 +63,8 @@
                 android:layout_height="wrap_content"
                 android:text="Логин"
                 android:textAlignment="center"
-                style="@style/text_style_regular" />
+                style="@style/text_style_header"
+                android:textSize="@dimen/text_size_small"/>
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/login_edt"
@@ -84,7 +88,8 @@
                 android:layout_height="wrap_content"
                 android:text="Пароль"
                 android:textAlignment="center"
-                style="@style/text_style_regular"/>
+                style="@style/text_style_header"
+                android:textSize="@dimen/text_size_small"/>
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -112,7 +117,8 @@
                 android:layout_marginTop="@dimen/space_vertical"
                 android:clickable="true"
                 android:text="Забыли пароль?"
-                style="@style/text_style_regular"/>
+                style="@style/text_style_header"
+                android:textSize="@dimen/text_size_medium"/>
 
             <View
                 android:layout_width="0dp"
@@ -137,7 +143,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Новый пользователь? "
+                    android:text="Новая компания? "
                     android:textSize="@dimen/text_size_medium"
                     android:textColor="@color/blue_grey_300"
                     android:fontFamily="@font/euclid_square_light"/>
@@ -147,7 +153,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="true"
-                    android:text="Регистрация"
+                    android:text="Зарегестрировать"
                     android:textSize="@dimen/text_size_medium"
                     android:textColor="@color/purple_A400"
                     android:fontFamily="@font/euclid_square_light"/>

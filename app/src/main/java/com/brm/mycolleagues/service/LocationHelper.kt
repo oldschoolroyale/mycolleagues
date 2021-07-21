@@ -1,4 +1,4 @@
-package com.brm.mycolleagues.utils
+package com.brm.mycolleagues.service
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -7,7 +7,6 @@ import android.content.IntentSender
 import android.location.Location
 import android.util.Log
 import android.widget.Toast
-import com.brm.mycolleagues.ui.fragment.list.ListFragment
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*

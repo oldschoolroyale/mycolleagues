@@ -1,6 +1,6 @@
 package com.brm.mycolleagues.ui.activity;
 
-import android.content.Intent;
+
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,8 @@ import com.brm.mycolleagues.utils.JsonConverter;
 import com.google.android.material.snackbar.Snackbar;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +44,7 @@ import static com.brm.mycolleagues.utils.ViewAnimation.collapse;
 import static com.brm.mycolleagues.utils.ViewAnimation.expand;
 
 @AndroidEntryPoint
-public class RegistrationActivity extends AppCompatActivity {
+public class CreateUserActivity extends AppCompatActivity {
 
     private List<View> view_list = new ArrayList<>();
     private List<RelativeLayout> step_view_list = new ArrayList<>();
@@ -81,29 +84,31 @@ public class RegistrationActivity extends AppCompatActivity {
     };
 
     private final Observer<BaseModel<PersonModel>> personObserver = resp ->{
-      switch (resp.getStatus()){
-          case LOADING:
-              loader.setVisibility(View.VISIBLE);
-              break;
-          case SUCCESS:
-              AppPreferences.INSTANCE.setUsername(myUsername);
-              if (resp.getResponse() != null && resp.getResponse().getData() != null){
-                  if (resp.getResponse().getData().is_online()){
-                      AppPreferences.INSTANCE.set_online(true);
-                  }
-                  jsonConverter.convertResponse(resp.getResponse().getData());
-              }
-              goHome();
-              break;
-          case ERROR:
-              Toast.makeText(this, "Ошибка сервера" + resp.getResponse().getError_text(), Toast.LENGTH_LONG).show();
-      }
+        switch (resp.getStatus()){
+            case LOADING:
+                loader.setVisibility(View.VISIBLE);
+                break;
+            case SUCCESS:
+                AppPreferences.INSTANCE.setUsername(myUsername);
+                if (resp.getResponse() != null && resp.getResponse().getData() != null){
+                    if (resp.getResponse().getData().is_online()){
+                        AppPreferences.INSTANCE.set_online(true);
+                    }
+                    jsonConverter.convertResponse(resp.getResponse().getData());
+                }
+                break;
+            case ERROR:
+                Toast.makeText(this, "Ошибка сервера" + resp.getResponse().getError_text(), Toast.LENGTH_LONG).show();
+        }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registration);
+        setContentView(R.layout.create_user_activity);
+
+        String id = getIntent().getStringExtra("id");
+        ((TextView)findViewById(R.id.tv_company_code)).setText("Приглашение в компанию : " + id);
         parent_view = findViewById(android.R.id.content);
         loader = findViewById(R.id.activityRegistrationLoader);
         mViewModel = new ViewModelProvider(this).get(RegistrationViewModel.class);
@@ -116,14 +121,12 @@ public class RegistrationActivity extends AppCompatActivity {
     private void initComponent() {
         // populate layout field
         view_list.add(findViewById(R.id.lyt_title));
-        view_list.add(findViewById(R.id.lyt_description));
         view_list.add(findViewById(R.id.lyt_time));
         view_list.add(findViewById(R.id.lyt_date));
         view_list.add(findViewById(R.id.lyt_confirmation));
 
         // populate view step (circle in left)
         step_view_list.add(((RelativeLayout) findViewById(R.id.step_title)));
-        step_view_list.add(((RelativeLayout) findViewById(R.id.step_description)));
         step_view_list.add(((RelativeLayout) findViewById(R.id.step_time)));
         step_view_list.add(((RelativeLayout) findViewById(R.id.step_date)));
         step_view_list.add(((RelativeLayout) findViewById(R.id.step_confirmation)));
@@ -149,15 +152,6 @@ public class RegistrationActivity extends AppCompatActivity {
                 Log.d("oldschool", myName);
 
                 collapseAndContinue(0);
-                break;
-            case R.id.bt_continue_description:
-                // validate input user here
-                if (((EditText) findViewById(R.id.et_description)).getText().toString().trim().equals("")) {
-                    Snackbar.make(parent_view, "Идентификатор не может быть пустым", Snackbar.LENGTH_SHORT).show();
-                    return;
-                }
-
-                collapseAndContinue(1);
                 break;
             case R.id.bt_continue_time:
                 // validate input user here
@@ -214,13 +208,6 @@ public class RegistrationActivity extends AppCompatActivity {
                     expand(view_list.get(0));
                 }
                 break;
-            case R.id.tv_label_description:
-                if (success_step >= 1 && current_step != 1) {
-                    current_step = 1;
-                    collapseAll();
-                    expand(view_list.get(1));
-                }
-                break;
             case R.id.tv_label_time:
                 if (success_step >= 2 && current_step != 2) {
                     current_step = 2;
@@ -273,11 +260,5 @@ public class RegistrationActivity extends AppCompatActivity {
     public void hideSoftKeyboard() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
-
-    private void goHome(){
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        RegistrationActivity.this.finish();
-    }
 }
+

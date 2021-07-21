@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
+import androidx.databinding.ObservableBoolean
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -29,11 +30,17 @@ class ListViewModel @ViewModelInject constructor(private val repository: AllUser
     private val _work_status = MutableLiveData<BaseModel<Boolean>>()
     val work_status :LiveData<BaseModel<Boolean>> = _work_status
 
-    private val _is_list_empty = MutableLiveData<Boolean>(false)
+    private val _is_list_empty = MutableLiveData<Boolean>()
     val is_list_empty: LiveData<Boolean> = _is_list_empty
+
+    val fabVisibility = ObservableBoolean(false)
 
     private fun isListEmptyCheck(list: List<PersonModel>){
         _is_list_empty.value = list.isEmpty()
+    }
+
+    fun isFabVisible(boolean: Boolean){
+        fabVisibility.set(boolean)
     }
 
     private fun sendWorkStatus(isOnline: Boolean, workStart: Long){
@@ -75,27 +82,34 @@ class ListViewModel @ViewModelInject constructor(private val repository: AllUser
         }
     }
 
-    private fun startWork(){
-        val time = System.currentTimeMillis()
-        if (AppPreferences.is_online){
-            sendWorkStatus(false, time)
-        }
-        else{
-            sendWorkStatus(true, time)
-        }
-    }
-
-    fun workAlertDialog(context: Context){
+    fun workEndDialog(context: Context){
         val dialogBuilder = AlertDialog.Builder(context)
-        dialogBuilder.setMessage("Поменять статус?")
-            // if the dialog is cancelable
+        dialogBuilder.setTitle("Закончить работу?")
+        dialogBuilder.setMessage("Внимание! После окончания работы, приступить к работе вы сможете только через 5 часов")
             .setCancelable(true)
             .setPositiveButton("Да", DialogInterface.OnClickListener { _, _ ->
 //                            dialog, id -> LocationHelper(requireContext(), requireActivity()).locationRequest()
-                startWork()
+                val time = System.currentTimeMillis()
+                sendWorkStatus(false, time)
             })
             .setNegativeButton("Нет") { _, _ ->}
         val alert = dialogBuilder.create()
         alert.show()
     }
+
+    fun workStartDialog(context: Context){
+        val dialogBuilder = AlertDialog.Builder(context)
+        dialogBuilder.setMessage("Приступить к работе?")
+            .setCancelable(true)
+            .setPositiveButton("Да") {_, _ ->
+                val time = System.currentTimeMillis()
+                sendWorkStatus(true, time)
+            }
+            .setNegativeButton("Нет") {_, _ ->
+
+            }
+        val alert = dialogBuilder.create()
+        alert.show()
+    }
+
 }

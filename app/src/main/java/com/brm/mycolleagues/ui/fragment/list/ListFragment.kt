@@ -3,12 +3,17 @@ package com.brm.mycolleagues.ui.fragment.list
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -21,10 +26,7 @@ import com.brm.mycolleagues.ui.activity.LoginActivity
 import com.brm.mycolleagues.ui.fragment.list.model.MonthModel
 import com.brm.mycolleagues.ui.fragment.list.model.PersonModel
 import com.brm.mycolleagues.ui.fragment.list.vm.ListViewModel
-import com.brm.mycolleagues.utils.AppPreferences
-import com.brm.mycolleagues.utils.BaseModel
-import com.brm.mycolleagues.utils.JsonConverter
-import com.brm.mycolleagues.utils.Status
+import com.brm.mycolleagues.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_list.view.*
 import java.text.SimpleDateFormat
@@ -68,25 +70,41 @@ class ListFragment : Fragment(),
     }
 
     private val listEmptyChecker = Observer<Boolean>{
+        val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.circle_explosion_anim).apply {
+            duration = 700
+            interpolator = AccelerateDecelerateInterpolator()
+        }
 
         when(it){
             true ->{
-                binding.fragmentListEmptyListLayout.visibility = View.VISIBLE
-                binding.fragmentListRecycler.visibility = View.INVISIBLE
+                binding.circleRevert.isVisible = true
+                binding.circleRevert.startAnimation(animation){
+                    binding.listRoot.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey_10))
+                    binding.circleRevert.isVisible = false
+                    binding.fragmentListEmptyListLayout.visibility = View.VISIBLE
+                    binding.fragmentListRecycler.visibility = View.INVISIBLE
+                }
             }
             false ->{
-                binding.fragmentListEmptyListLayout.visibility = View.INVISIBLE
-                binding.fragmentListRecycler.visibility = View.VISIBLE
+                binding.circle.isVisible = true
+                binding.circle.startAnimation(animation) {
+                    binding.listRoot.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
+                    binding.circle.isVisible = false
+                    binding.fragmentListEmptyListLayout.visibility = View.INVISIBLE
+                    binding.fragmentListRecycler.visibility = View.VISIBLE
+                }
             }
         }
     }
 
     private val listWorkStatus = Observer<BaseModel<Boolean>>{
         when(it.status){
-            Status.LOADING ->{}
+            Status.LOADING ->{
+                dialog.dismiss()
+            }
             Status.SUCCESS ->{
                 AppPreferences.is_online = it.response?.data!!
-                dialog.dismiss()
+                listViewModel.isFabVisible(it.response.data)
             }
             Status.ERROR ->{
                 dialog.show()
@@ -97,7 +115,7 @@ class ListFragment : Fragment(),
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         setHasOptionsMenu(true)
         _binding =  FragmentListBinding.inflate(layoutInflater, container, false)
@@ -109,6 +127,8 @@ class ListFragment : Fragment(),
         binding.lifecycleOwner = this
         binding.viewModel = listViewModel
         binding.context = requireContext()
+
+        listViewModel.isFabVisible(AppPreferences.is_online)
 
         val mills = System.currentTimeMillis()
         val df = Date(mills)
@@ -144,6 +164,14 @@ class ListFragment : Fragment(),
 
         binding.fragmentListSwipeRefresh.setOnRefreshListener {
             listViewModel.loadList()
+        }
+
+        binding.fragmentListFabStop.setOnClickListener {
+            listViewModel.workEndDialog(requireContext())
+
+        }
+        binding.fragmentListFabStart.setOnClickListener {
+            listViewModel.workStartDialog(requireContext())
         }
     }
 

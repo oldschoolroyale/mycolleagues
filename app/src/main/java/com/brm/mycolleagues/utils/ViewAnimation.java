@@ -126,7 +126,7 @@ public class ViewAnimation {
     }
 
     public static void fadeIn(final View v) {
-        ViewAnimation.fadeIn(v, null);
+        fadeIn(v, null);
     }
 
     public static void fadeIn(final View v, final AnimListener animListener) {
@@ -147,7 +147,7 @@ public class ViewAnimation {
     }
 
     public static void fadeOut(final View v) {
-        ViewAnimation.fadeOut(v, null);
+        fadeOut(v, null);
     }
 
     public static void fadeOut(final View v, final AnimListener animListener) {
@@ -234,7 +234,7 @@ public class ViewAnimation {
 
 
     public static void showScale(final View v) {
-        ViewAnimation.showScale(v, null);
+        showScale(v, null);
     }
 
     public static void showScale(final View v, final AnimListener animListener) {
@@ -253,7 +253,7 @@ public class ViewAnimation {
     }
 
     public static void hideScale(final View v) {
-        ViewAnimation.fadeOut(v, null);
+        fadeOut(v, null);
     }
 
     public static void hideScale(final View v, final AnimListener animListener) {
