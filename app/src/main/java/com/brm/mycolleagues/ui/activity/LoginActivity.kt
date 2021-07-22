@@ -82,13 +82,20 @@ class LoginActivity : AppCompatActivity() {
         }
 
         login_btn.setOnClickListener {
-            username = login_edt.text.toString()
-            password = password_edt.text.toString()
-            if (username.isNotEmpty() && password.isNotEmpty()){
+            username = login_edt.text.toString().trim()
+            password = password_edt.text.toString().trim()
+
+            if (validator(username, password)){
                 loginViewModel.check(username, password)
             }
-            else{Toast.makeText(this, "Все поля должны быть заполненны!", Toast.LENGTH_LONG).show()}
+            else{
+                Toast.makeText(this, "Все поля должны быть заполненны!", Toast.LENGTH_LONG).show()
+            }
         }
+    }
+
+    fun validator(username: String, password: String): Boolean{
+        return (username.isNotEmpty() && password.isNotEmpty())
     }
 
     private fun showMessage(message: String){

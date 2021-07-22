@@ -166,18 +166,16 @@ public class RegistrationActivity extends AppCompatActivity {
                     Snackbar.make(parent_view, "Логин должен быть заполнен", Snackbar.LENGTH_SHORT).show();
                     return;
                 }
-                Log.d("oldschool", myUsername);
 
                 collapseAndContinue(2);
                 break;
             case R.id.bt_continue_date:
                 // validate input user here
                 myPassword = ((EditText) findViewById(R.id.et_password)).getText().toString().trim();
-                if (myPassword.equals("")) {
-                    Snackbar.make(parent_view, "Поле с паролем не может быть пустым", Snackbar.LENGTH_SHORT).show();
+                if (!passwordValidator(myPassword)){
+                    Snackbar.make(parent_view, "Пароль не должен быть пустым, содержать в себе как минимум одну заглавную букву и цифру", Snackbar.LENGTH_SHORT).show();
                     return;
                 }
-                Log.d("oldschool", myPassword);
                 collapseAndContinue(3);
                 break;
             case R.id.bt_add_event:
@@ -258,6 +256,30 @@ public class RegistrationActivity extends AppCompatActivity {
         for (View v : view_list) {
             collapse(v);
         }
+    }
+
+    public boolean passwordValidator(String myPassword){
+        if (!myPassword.equals("")){
+                char ch;
+                boolean hasUpperCase = false;
+                boolean hasDigit = false;
+                for (int i = 0; i < myPassword.length(); i++) {
+                    ch = myPassword.charAt(i);
+                    if (Character.isDigit(ch)){
+                        hasDigit = true;
+                    }
+                    if (Character.isUpperCase(ch)){
+                        hasUpperCase = true;
+                    }
+                }
+                if (hasUpperCase && hasDigit){
+                    return true;
+                }
+                else {
+                    return false;
+                }
+        }
+        return false;
     }
 
     private void setCheckedStep(int index) {

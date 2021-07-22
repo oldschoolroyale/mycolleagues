@@ -1,4 +1,4 @@
-spackage com.brm.mycolleagues.ui.activity
+package com.brm.mycolleagues.ui.activity
 
 import android.app.Dialog
 import android.content.Intent
