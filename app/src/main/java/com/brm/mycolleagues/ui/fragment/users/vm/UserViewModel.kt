@@ -1,5 +1,6 @@
 package com.brm.mycolleagues.ui.fragment.users.vm
 
+import androidx.databinding.ObservableBoolean
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,6 +18,11 @@ import kotlinx.coroutines.withContext
 class UserViewModel @ViewModelInject constructor(val repository: AllUsersRepository): ViewModel() {
     private val _loading_status = MutableLiveData<BaseModel<List<PersonModel>>>()
     val loading_status : LiveData<BaseModel<List<PersonModel>>> = _loading_status
+    val loaderVisibilityStatus = ObservableBoolean(false)
+
+    fun loaderStatusChange(boolean: Boolean){
+        loaderVisibilityStatus.set(boolean)
+    }
 
     fun loadUsers(){
         viewModelScope.launch {

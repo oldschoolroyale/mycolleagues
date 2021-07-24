@@ -35,14 +35,18 @@ class UserFragment : Fragment() {
 
     private val userObserver = Observer<BaseModel<List<PersonModel>>>{
         when(it.status){
-            Status.LOADING ->{}
+            Status.LOADING ->{
+                userViewModel.loaderStatusChange(true)
+            }
             Status.SUCCESS ->{
-                dialog.dismiss()
                 if (it.response?.data != null){
                     with(adapter) { newList(list = it.response.data) }
                 }
+                userViewModel.loaderStatusChange(false)
+                dialog.dismiss()
                 }
             Status.ERROR ->{
+                userViewModel.loaderStatusChange(false)
                 dialog.show()
             }
         }
@@ -85,8 +89,8 @@ class UserFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
         userViewModel.loading_status.removeObserver(userObserver)
-        super.onDestroyView()
     }
 }

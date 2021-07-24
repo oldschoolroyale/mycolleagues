@@ -116,4 +116,33 @@
         <item name="colorControlNormal">@color/grey_40</item>
     </style>
 
+
+    <!-- Edit text -->
+    <style name="MyCustomEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/euclid_square_light</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:singleLine">true</item>
+    </style>
+    <style name="edit_text_30" parent="MyCustomEditText">
+        <item name="android:maxLength">30</item>
+        <item name="android:inputType">text</item>
+    </style>
+    <style name="edit_text_phone_number_9" parent="MyCustomEditText">
+        <item name="android:maxLength">9</item>
+        <item name="android:inputType">phone</item>
+        <item name="android:digits">0123456789</item>
+    </style>
+    <style name="edit_text_password_30" parent="MyCustomEditText">
+        <item name="android:maxLength">30</item>
+        <item name="android:inputType">textPassword</item>
+    </style>
+    <style name="edit_text_verification_code" parent="MyCustomEditText">
+        <item name="android:maxLength">10</item>
+        <item name="android:inputType">number</item>
+        <item name="android:digits">0123456789</item>
+    </style>
+
+
 </resources>

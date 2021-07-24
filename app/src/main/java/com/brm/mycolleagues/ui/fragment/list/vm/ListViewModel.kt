@@ -26,6 +26,7 @@ import kotlinx.coroutines.withContext
 class ListViewModel @ViewModelInject constructor(private val repository: AllUsersRepository): ViewModel() {
     private val _loading_status = MutableLiveData<BaseModel<List<PersonModel>>>()
     val loading_status : LiveData<BaseModel<List<PersonModel>>> = _loading_status
+    val loaderVisibilityStatus = ObservableBoolean(false)
 
     private val _work_status = MutableLiveData<BaseModel<Boolean>>()
     val work_status :LiveData<BaseModel<Boolean>> = _work_status
@@ -41,6 +42,10 @@ class ListViewModel @ViewModelInject constructor(private val repository: AllUser
 
     fun isFabVisible(boolean: Boolean){
         fabVisibility.set(boolean)
+    }
+
+    fun loaderVisibilitySet(boolean: Boolean){
+        loaderVisibilityStatus.set(boolean)
     }
 
     private fun sendWorkStatus(isOnline: Boolean, workStart: Long){

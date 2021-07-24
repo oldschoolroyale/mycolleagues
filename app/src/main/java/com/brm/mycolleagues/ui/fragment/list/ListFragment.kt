@@ -55,18 +55,20 @@ class ListFragment : Fragment(),
     private val listObservable = Observer<BaseModel<List<PersonModel>>>{
         when(it.status){
             Status.LOADING ->{
-
+                listViewModel.loaderVisibilitySet(true)
             }
             Status.SUCCESS ->{
                 adapter.newList(it.response?.data ?: listOf())
                     .also {
                         binding.fragmentListSwipeRefresh.isRefreshing = false
+                        listViewModel.loaderVisibilitySet(false)
                         dialog.dismiss()
                     }
             }
 
             Status.ERROR ->{
                 binding.fragmentListSwipeRefresh.isRefreshing = false
+                listViewModel.loaderVisibilitySet(false)
                 dialog.show()
             }
         }
@@ -109,6 +111,7 @@ class ListFragment : Fragment(),
     private val listWorkStatus = Observer<BaseModel<Boolean>>{
         when(it.status){
             Status.LOADING ->{
+                listViewModel.loaderVisibilitySet(true)
                 dialog.dismiss()
             }
             Status.SUCCESS ->{
@@ -121,8 +124,10 @@ class ListFragment : Fragment(),
                 else{
                     showMessage("Ошибка обновления статуса работы. Попробуйте еще раз!")
                 }
+                listViewModel.loaderVisibilitySet(false)
             }
             Status.ERROR ->{
+                listViewModel.loaderVisibilitySet(false)
                 dialog.show()
             }
         }
@@ -247,12 +252,12 @@ class ListFragment : Fragment(),
     }
 
     override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
         listViewModel.apply {
             loading_status.removeObserver(listObservable)
             is_list_empty.removeObserver(listEmptyChecker)
             work_status.removeObserver(listWorkStatus)
         }
-        super.onDestroyView()
     }
 }

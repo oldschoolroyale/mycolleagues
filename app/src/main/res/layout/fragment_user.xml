@@ -20,7 +20,7 @@
         <com.wang.avi.AVLoadingIndicatorView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:loaderVisibility="@{viewModel.loading_status}"
+            android:loaderVisibility="@{viewModel.loaderVisibilityStatus}"
             android:layout_centerInParent="true"
             app:indicatorName="BallClipRotateMultipleIndicator"
             app:indicatorColor="@color/colorAccent"

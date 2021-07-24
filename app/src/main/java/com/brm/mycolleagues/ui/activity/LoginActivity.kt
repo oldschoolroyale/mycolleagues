@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.brm.mycolleagues.R
+import com.brm.mycolleagues.databinding.ActivityLoginBinding
 import com.brm.mycolleagues.ui.activity.vm.RegistrationViewModel
 import com.brm.mycolleagues.ui.fragment.list.model.PersonModel
 import com.brm.mycolleagues.utils.AppPreferences
@@ -26,27 +27,28 @@ class LoginActivity : AppCompatActivity() {
     private val loginViewModel by viewModels<RegistrationViewModel>()
     @Inject lateinit var jsonConverter: JsonConverter
 
-    private lateinit var loader: AVLoadingIndicatorView
+    private var _binding : ActivityLoginBinding? = null
+    private val binding get() = _binding!!
+
     private var etUsername = ""
     private var etPassword =""
 
     private val loginObserver = Observer<BaseModel<Boolean>>{
         when(it.status){
             Status.LOADING ->{
-                loader.visibility = View.VISIBLE
+               loginViewModel.changeLoaderVisibility(true)
             }
             Status.SUCCESS ->{
                 if (it.response?.data!!){
                     loginViewModel.login(etUsername)
                 }
                 else{
-                    loader.visibility = View.INVISIBLE
                     showMessage("Пользователь не найден")
                 }
-
+                loginViewModel.changeLoaderVisibility(false)
             }
             Status.ERROR ->{
-                loader.visibility = View.INVISIBLE
+                loginViewModel.changeLoaderVisibility(false)
                 showMessage(it.response?.error_text.toString())
             }
         }
@@ -54,8 +56,11 @@ class LoginActivity : AppCompatActivity() {
 
     private val signInObserver = Observer<BaseModel<PersonModel>>{ it ->
         when(it.status){
-            Status.LOADING -> {}
+            Status.LOADING -> {
+                loginViewModel.changeLoaderVisibility(true)
+            }
             Status.SUCCESS -> {
+                loginViewModel.changeLoaderVisibility(true)
                 AppPreferences.apply {
                     username = etUsername
                     if (it.response?.data != null){
@@ -69,10 +74,9 @@ class LoginActivity : AppCompatActivity() {
                         showMessage("Ошибка, сервер отправил пустую модель")
                     }
                 }
-
-
             }
             Status.ERROR ->{
+                loginViewModel.changeLoaderVisibility(true)
                 showMessage("Ошибка авторизации")
             }
 
@@ -81,11 +85,15 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        _binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        loader = findViewById(R.id.activityLoginLoader)
-        loginViewModel.check_status.observe(this, loginObserver)
-        loginViewModel.login_status.observe(this, signInObserver)
+        binding.viewModel = loginViewModel
+
+        loginViewModel.apply {
+            check_status.observe(this@LoginActivity, loginObserver)
+            login_status.observe(this@LoginActivity, signInObserver)
+        }
 
         sign_up.setOnClickListener {
             goRegistration()
@@ -119,6 +127,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun goRegistration(){
         startActivity(Intent(this, RegistrationActivity::class.java))
-        finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

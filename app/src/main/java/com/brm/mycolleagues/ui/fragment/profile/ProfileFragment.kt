@@ -35,6 +35,7 @@ class ProfileFragment : Fragment() {
     private lateinit var weekWave: WaveLoadingView
 
     private lateinit var dialog: Dialog
+
     private val monthObserver = Observer<BaseModel<Long>>{
         when(it.status){
             Status.LOADING ->{}
@@ -56,10 +57,13 @@ class ProfileFragment : Fragment() {
                 }
             }
             Status.ERROR ->{
-
+                if (!dialog.isShowing){
+                    dialog.show()
+                }
             }
         }
     }
+
     private val weekObserver = Observer<BaseModel<WeekResponse>>{
         when(it.status){
             Status.LOADING ->{}
@@ -90,7 +94,9 @@ class ProfileFragment : Fragment() {
                 }
             }
             Status.ERROR ->{
-                dialog.show()
+                if (!dialog.isShowing){
+                    dialog.show()
+                }
             }
         }
     }
@@ -149,9 +155,9 @@ class ProfileFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
         profileViewModel.month_status.removeObserver(monthObserver)
         profileViewModel.week_status.removeObserver(weekObserver)
-        super.onDestroyView()
     }
 }

@@ -6,7 +6,9 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
+import androidx.databinding.ObservableBoolean
 import androidx.navigation.findNavController
 import com.brm.mycolleagues.R
 import com.brm.mycolleagues.ui.fragment.list.ListFragmentDirections
@@ -57,11 +59,10 @@ class BindingAdapter {
 
         @BindingAdapter("android:loaderVisibility")
         @JvmStatic
-        fun loaderVisibility(view: AVLoadingIndicatorView, it: BaseModel<List<PersonModel>>){
-            when(it.status){
-                Status.LOADING ->{view.visibility = View.VISIBLE}
-                Status.SUCCESS ->{view.visibility = View.INVISIBLE}
-                Status.ERROR ->{view.visibility = View.INVISIBLE}
+        fun loaderVisibility(view: View, it: Boolean){
+            when(it){
+                true ->{view.isVisible = true}
+                false ->{view.isVisible = false}
             }
         }
 

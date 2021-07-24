@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:padding="@dimen/space_horizontal">
+    xmlns:mask="http://schemas.android.com/tools">
 
-        <com.wang.avi.AVLoadingIndicatorView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/activityLoginLoader"
-            android:visibility="invisible"
-            android:layout_centerInParent="true"
-            app:indicatorName="BallClipRotateMultipleIndicator"
-            app:indicatorColor="@color/colorAccent"
-            style="@style/AVLoadingIndicatorView"/>
+    <data>
+        <variable
+            name="viewModel"
+            type="com.brm.mycolleagues.ui.activity.vm.RegistrationViewModel" />
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:padding="@dimen/space_horizontal">
+            <com.wang.avi.AVLoadingIndicatorView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/activityLoginLoader"
+                android:loaderVisibility="@{viewModel.loaderVisibilityStatus}"
+                android:layout_centerInParent="true"
+                app:indicatorName="BallClipRotateMultipleIndicator"
+                app:indicatorColor="@color/colorAccent"
+                style="@style/AVLoadingIndicatorView" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,8 +51,7 @@
                 android:layout_marginTop="@dimen/space_vertical"
                 style="@style/text_style_label"
                 android:text="Добро пожаловать,"
-                android:textSize="@dimen/text_size_large"
-                 />
+                android:textSize="@dimen/text_size_large" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -51,59 +59,43 @@
                 android:layout_marginTop="@dimen/space_small"
                 android:text="Войдите для продолжения"
                 android:textSize="@dimen/text_size_large"
-                style="@style/text_style_header_grey"/>
+                style="@style/text_style_header_grey" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Логин"
-                android:textAlignment="center"
-                style="@style/text_style_header"
-                android:textSize="@dimen/text_size_small"/>
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/login_edt"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="-4dp"
-                android:layout_marginRight="-4dp"
-                android:inputType="textEmailAddress"
-                android:maxLength="50"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textColor="@color/blue_grey_300"
-                android:theme="@style/EditText.Grey" />
+                android:orientation="vertical">
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="@dimen/spacing_mlarge" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Логин"
+                    >
+                    <EditText
+                        android:id="@+id/login_edt"
+                        style="@style/edit_text_30"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Пароль"
-                android:textAlignment="center"
-                style="@style/text_style_header"
-                android:textSize="@dimen/text_size_small"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Пароль"
+                    android:id="@+id/fragmentSignUpPasswordTI"
+                    app:passwordToggleEnabled="true"
+                    android:layout_marginTop="20dp">
+                    <EditText
+                        android:id="@+id/password_edt"
+                        style="@style/edit_text_password_30"
+                        android:imeOptions="actionDone"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="-4dp"
-                android:layout_marginRight="-4dp"
-                android:inputType="textPassword"
-                android:maxLength="50"
-                android:id="@+id/password_edt"
-                android:maxLines="1"
-                android:imeOptions="actionDone"
-                android:singleLine="true"
-                android:textColor="@color/blue_grey_300"
-                android:theme="@style/EditText.Grey" />
+            </LinearLayout>
 
             <View
                 android:layout_width="0dp"
@@ -118,7 +110,7 @@
                 android:clickable="true"
                 android:text="Забыли пароль?"
                 style="@style/text_style_header"
-                android:textSize="@dimen/text_size_medium"/>
+                android:textSize="@dimen/text_size_medium" />
 
             <View
                 android:layout_width="0dp"
@@ -127,7 +119,7 @@
             <Button
                 android:id="@+id/login_btn"
                 style="@style/button_primary"
-                android:text="@string/sign_in"/>
+                android:text="@string/sign_in" />
 
             <View
                 android:layout_width="0dp"
@@ -146,7 +138,7 @@
                     android:text="Новая компания? "
                     android:textSize="@dimen/text_size_medium"
                     android:textColor="@color/blue_grey_300"
-                    android:fontFamily="@font/euclid_square_light"/>
+                    android:fontFamily="@font/euclid_square_light" />
 
                 <TextView
                     android:id="@+id/sign_up"
@@ -156,7 +148,7 @@
                     android:text="Зарегестрировать"
                     android:textSize="@dimen/text_size_medium"
                     android:textColor="@color/purple_A400"
-                    android:fontFamily="@font/euclid_square_light"/>
+                    android:fontFamily="@font/euclid_square_light" />
 
             </LinearLayout>
 
@@ -167,3 +159,4 @@
         </LinearLayout>
 
     </RelativeLayout>
+</layout>

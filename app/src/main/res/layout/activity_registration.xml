@@ -99,7 +99,7 @@
                         android:gravity="center_vertical"
                         android:onClick="clickLabel"
                         android:text="Имя/Фамилия"
-                        style="@style/text_style_label"/>
+                        style="@style/text_style_header"/>
 
                     <LinearLayout
                         android:id="@+id/lyt_title"
@@ -179,7 +179,7 @@
                         android:gravity="center_vertical"
                         android:onClick="clickLabel"
                         android:text="Идентификатор компании"
-                        style="@style/text_style_label"/>
+                        style="@style/text_style_header"/>
 
                     <LinearLayout
                         android:id="@+id/lyt_description"
@@ -261,7 +261,7 @@
                         android:gravity="center_vertical"
                         android:onClick="clickLabel"
                         android:text="Логин"
-                        style="@style/text_style_label"/>
+                        style="@style/text_style_header"/>
 
                     <LinearLayout
                         android:id="@+id/lyt_time"
@@ -344,7 +344,7 @@
                         android:gravity="center_vertical"
                         android:onClick="clickLabel"
                         android:text="Пароль"
-                        style="@style/text_style_label"/>
+                        style="@style/text_style_header"/>
 
                     <LinearLayout
                         android:id="@+id/lyt_date"
@@ -427,7 +427,7 @@
                         android:gravity="center_vertical"
                         android:onClick="clickLabel"
                         android:text="Подтверждение"
-                        style="@style/text_style_label"/>
+                        style="@style/text_style_header"/>
 
                     <LinearLayout
                         android:id="@+id/lyt_confirmation"
