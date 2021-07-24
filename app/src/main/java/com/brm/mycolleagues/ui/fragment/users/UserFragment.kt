@@ -38,7 +38,10 @@ class UserFragment : Fragment() {
             Status.LOADING ->{}
             Status.SUCCESS ->{
                 dialog.dismiss()
-                adapter.newList(it.response!!.data!!)}
+                if (it.response?.data != null){
+                    with(adapter) { newList(list = it.response.data) }
+                }
+                }
             Status.ERROR ->{
                 dialog.show()
             }
@@ -48,7 +51,7 @@ class UserFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding =  FragmentUserBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -60,13 +63,15 @@ class UserFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.viewModel = userViewModel
 
-        view.fragmentUserRecycler.adapter = adapter
-        view.fragmentUserRecycler.layoutManager = LinearLayoutManager(requireContext())
+        binding.fragmentUserRecycler.adapter = adapter
+        binding.fragmentUserRecycler.layoutManager = LinearLayoutManager(requireContext())
+
         userViewModel.loading_status.observe(viewLifecycleOwner, userObserver)
         userViewModel.loadUsers()
 
         dialog = Dialog(requireContext(), R.style.AppTheme_NoActionbar)
         dialog.setContentView(R.layout.dialog_server_error)
+
         val btnRetry = dialog.findViewById<TextView>(R.id.dialogServerRetryText)
         val btnCancel = dialog.findViewById<TextView>(R.id.dialogServerCancel)
         btnCancel.setOnClickListener {

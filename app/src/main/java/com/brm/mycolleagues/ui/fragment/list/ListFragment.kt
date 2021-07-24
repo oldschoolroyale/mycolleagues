@@ -27,6 +27,7 @@ import com.brm.mycolleagues.ui.fragment.list.model.MonthModel
 import com.brm.mycolleagues.ui.fragment.list.model.PersonModel
 import com.brm.mycolleagues.ui.fragment.list.vm.ListViewModel
 import com.brm.mycolleagues.utils.*
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_list.view.*
 import java.text.SimpleDateFormat
@@ -57,9 +58,11 @@ class ListFragment : Fragment(),
 
             }
             Status.SUCCESS ->{
-                adapter.newList(it.response!!.data!!)
-                binding.fragmentListSwipeRefresh.isRefreshing = false
-                dialog.dismiss()
+                adapter.newList(it.response?.data ?: listOf())
+                    .also {
+                        binding.fragmentListSwipeRefresh.isRefreshing = false
+                        dialog.dismiss()
+                    }
             }
 
             Status.ERROR ->{
@@ -77,21 +80,27 @@ class ListFragment : Fragment(),
 
         when(it){
             true ->{
-                binding.circleRevert.isVisible = true
-                binding.circleRevert.startAnimation(animation){
-                    binding.listRoot.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey_10))
-                    binding.circleRevert.isVisible = false
-                    binding.fragmentListEmptyListLayout.visibility = View.VISIBLE
-                    binding.fragmentListRecycler.visibility = View.INVISIBLE
+                binding.apply {
+                    circleRevert.isVisible = true
+                    circleRevert.startAnimation(animation){
+                        listRoot.setBackgroundColor(ContextCompat.
+                        getColor(requireContext(), R.color.grey_10))
+                        circleRevert.isVisible = false
+                        fragmentListEmptyListLayout.isVisible = true
+                        fragmentListRecycler.isVisible = false
+                    }
                 }
             }
             false ->{
-                binding.circle.isVisible = true
-                binding.circle.startAnimation(animation) {
-                    binding.listRoot.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
-                    binding.circle.isVisible = false
-                    binding.fragmentListEmptyListLayout.visibility = View.INVISIBLE
-                    binding.fragmentListRecycler.visibility = View.VISIBLE
+                binding.apply {
+                    circle.isVisible = true
+                    circle.startAnimation(animation){
+                        listRoot.setBackgroundColor(ContextCompat.
+                        getColor(requireContext(), R.color.white))
+                        circle.isVisible = false
+                        fragmentListEmptyListLayout.isVisible = false
+                        fragmentListRecycler.isVisible = true
+                    }
                 }
             }
         }
@@ -103,8 +112,15 @@ class ListFragment : Fragment(),
                 dialog.dismiss()
             }
             Status.SUCCESS ->{
-                AppPreferences.is_online = it.response?.data!!
-                listViewModel.isFabVisible(it.response.data)
+                if (it.response?.data != null){
+                    it.response.data.apply {
+                        AppPreferences.is_online = this
+                        listViewModel.isFabVisible(this)
+                    }
+                }
+                else{
+                    showMessage("Ошибка обновления статуса работы. Попробуйте еще раз!")
+                }
             }
             Status.ERROR ->{
                 dialog.show()
@@ -193,17 +209,25 @@ class ListFragment : Fragment(),
         inflater.inflate(R.menu.list_menu, menu)
         val search = menu.findItem(R.id.listMenuSearch)
         val searchView = search.actionView as? SearchView
-        searchView?.isSubmitButtonEnabled = true
-        searchView?.setOnQueryTextListener(this)
+        searchView?.apply {
+            isSubmitButtonEnabled = true
+            setOnQueryTextListener(this@ListFragment)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.listMenuAllUsers ->{findNavController().navigate(R.id.action_listFragment_to_userFragment)}
-            R.id.listMenuProfile ->{ startActivity(Intent(requireActivity(), AccountActivity::class.java))}
+            R.id.listMenuAllUsers ->{findNavController().
+            navigate(R.id.action_listFragment_to_userFragment)}
+            R.id.listMenuProfile ->{ startActivity(Intent(
+                requireActivity(), AccountActivity::class.java))}
             R.id.listMenuSignOut ->{signOut()}
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun showMessage(message: String){
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
     }
 
     private fun signOut() {
@@ -224,9 +248,11 @@ class ListFragment : Fragment(),
 
     override fun onDestroyView() {
         _binding = null
-        listViewModel.loading_status.removeObserver(listObservable)
-        listViewModel.is_list_empty.removeObserver(listEmptyChecker)
-        listViewModel.work_status.removeObserver(listWorkStatus)
+        listViewModel.apply {
+            loading_status.removeObserver(listObservable)
+            is_list_empty.removeObserver(listEmptyChecker)
+            work_status.removeObserver(listWorkStatus)
+        }
         super.onDestroyView()
     }
 }

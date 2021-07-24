@@ -44,14 +44,16 @@ class ProfileFragment : Fragment() {
                 val title: Double = (titleValue / 3600000).toDouble()
                 val progress : Int = ((title / 160) * 100).toInt()
                 val waveTitle = DecimalFormat("0.0").format(title)
-                waveLoading.progressValue = progress
-                waveLoading.centerTitle = "$waveTitle часов"
-                waveLoading.setShapeType(WaveLoadingView.ShapeType.CIRCLE)
-                waveLoading.setAmplitudeRatio(60)
-                waveLoading.setTopTitleStrokeColor(Color.GREEN)
-                waveLoading.setTopTitleStrokeWidth(3f)
-                waveLoading.setAnimDuration(3000)
-                waveLoading.startAnimation()
+                waveLoading.apply {
+                    progressValue = progress
+                    centerTitle = "$waveTitle часов"
+                    setShapeType(WaveLoadingView.ShapeType.CIRCLE)
+                    setAmplitudeRatio(60)
+                    setTopTitleStrokeColor(Color.GREEN)
+                    setTopTitleStrokeWidth(3f)
+                    setAnimDuration(3000)
+                    startAnimation()
+                }
             }
             Status.ERROR ->{
 
@@ -76,14 +78,16 @@ class ProfileFragment : Fragment() {
                 val title: Double = (workedTime / 3600000)
                 val waveTitle = DecimalFormat("0.0").format(title)
                 val progress : Int = ((title/ TOTAL_HOURS) * 100).toInt()
-               weekWave.centerTitle = "$waveTitle часов"
-               weekWave.setShapeType(WaveLoadingView.ShapeType.CIRCLE)
-               weekWave.progressValue = progress
-               weekWave.setAmplitudeRatio(60)
-               weekWave.setTopTitleStrokeColor(Color.GREEN)
-               weekWave.setTopTitleStrokeWidth(3f)
-               weekWave.setAnimDuration(3000)
-               weekWave.startAnimation()
+                weekWave.apply {
+                    centerTitle = "$waveTitle часов"
+                    setShapeType(WaveLoadingView.ShapeType.CIRCLE)
+                    progressValue = progress
+                    setAmplitudeRatio(60)
+                    setTopTitleStrokeColor(Color.GREEN)
+                    setTopTitleStrokeWidth(3f)
+                    setAnimDuration(3000)
+                    startAnimation()
+                }
             }
             Status.ERROR ->{
                 dialog.show()
@@ -100,7 +104,7 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding =  FragmentProfileBinding.inflate(layoutInflater, container, false)
         binding.model = myNav.model
@@ -112,12 +116,17 @@ class ProfileFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
-        profileViewModel.month_status.observe(viewLifecycleOwner, monthObserver)
-        profileViewModel.week_status.observe(viewLifecycleOwner, weekObserver)
+        profileViewModel.apply {
+            month_status.observe(viewLifecycleOwner, monthObserver)
+            week_status.observe(viewLifecycleOwner, weekObserver)
+        }
+
 
 
         dialog = Dialog(requireContext(), R.style.AppTheme_NoActionbar)
-        dialog.setContentView(R.layout.dialog_server_error)
+            .apply {
+                setContentView(R.layout.dialog_server_error)
+            }
         val btnRetry = dialog.findViewById<TextView>(R.id.dialogServerRetryText)
         val btnCancel = dialog.findViewById<TextView>(R.id.dialogServerCancel)
 

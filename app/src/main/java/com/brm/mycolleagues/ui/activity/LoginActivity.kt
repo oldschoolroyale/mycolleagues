@@ -27,8 +27,8 @@ class LoginActivity : AppCompatActivity() {
     @Inject lateinit var jsonConverter: JsonConverter
 
     private lateinit var loader: AVLoadingIndicatorView
-    private var username = ""
-    private var password =""
+    private var etUsername = ""
+    private var etPassword =""
 
     private val loginObserver = Observer<BaseModel<Boolean>>{
         when(it.status){
@@ -37,11 +37,11 @@ class LoginActivity : AppCompatActivity() {
             }
             Status.SUCCESS ->{
                 if (it.response?.data!!){
-                    loginViewModel.login(username)
+                    loginViewModel.login(etUsername)
                 }
                 else{
                     loader.visibility = View.INVISIBLE
-                    Toast.makeText(this, "Пользователь не найден", Toast.LENGTH_LONG).show()
+                    showMessage("Пользователь не найден")
                 }
 
             }
@@ -51,19 +51,29 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-    private val signInObserver = Observer<BaseModel<PersonModel>>{
+
+    private val signInObserver = Observer<BaseModel<PersonModel>>{ it ->
         when(it.status){
             Status.LOADING -> {}
             Status.SUCCESS -> {
-                AppPreferences.username = username
-                if (it.response?.data!!.is_online){
-                    AppPreferences.is_online = true
+                AppPreferences.apply {
+                    username = etUsername
+                    if (it.response?.data != null){
+                        is_online = it.response.data.is_online
+                        with(jsonConverter) { convertResponse(personModel = it.response.data) }
+                            .also {
+                                goMain()
+                            }
+                    }
+                    else{
+                        showMessage("Ошибка, сервер отправил пустую модель")
+                    }
                 }
-                jsonConverter.convertResponse(it.response.data)
-                goMain()
+
+
             }
             Status.ERROR ->{
-                Toast.makeText(this, "Ошибка авторизации", Toast.LENGTH_LONG).show()
+                showMessage("Ошибка авторизации")
             }
 
         }
@@ -82,14 +92,14 @@ class LoginActivity : AppCompatActivity() {
         }
 
         login_btn.setOnClickListener {
-            username = login_edt.text.toString().trim()
-            password = password_edt.text.toString().trim()
+            etUsername = login_edt.text.toString().trim()
+            etPassword = password_edt.text.toString().trim()
 
-            if (validator(username, password)){
-                loginViewModel.check(username, password)
+            if (validator(etUsername, etPassword)){
+                loginViewModel.check(etUsername, etPassword)
             }
             else{
-                Toast.makeText(this, "Все поля должны быть заполненны!", Toast.LENGTH_LONG).show()
+                showMessage("Все поля должны быть заполненны!")
             }
         }
     }
@@ -100,7 +110,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showMessage(message: String){
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-        Log.d("oldschool", message)
     }
 
     private fun goMain(){
